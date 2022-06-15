@@ -1,3 +1,10 @@
+package project.main;
+
+import project.manager.Manager;
+import project.tasks.Epic;
+import project.tasks.Subtask;
+import project.tasks.Task;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -33,19 +40,19 @@ public class Main {
 
         // Измените статусы созданных объектов, распечатайте. Проверьте, что статус задачи и подзадачи сохранился,
         // а статус эпика рассчитался по статусам подзадач.
-        task1 = new Task(task1.id, "Обновление задачи", "Описываю новое обновление и меняю статус",
+        task1 = new Task(task1.getId(), "Обновление задачи", "Описываю новое обновление и меняю статус",
                 "IN_PROGRESS");
-        subtask1 = new Subtask(subtask1.id, "Обновление подзадачи из эпика 1",
-                "Подзадача 1, ее обновление и замена статуса", "IN_PROGRESS", epic1);
+        subtask1 = new Subtask(subtask1, "Обновление подзадачи из эпика 1",
+                "Подзадача 1, ее обновление и замена статуса", "IN_PROGRESS", epic1, epic2);
 
         System.out.println(task1);
         System.out.println(subtask1);
         System.out.println(epic1);
+        System.out.println(epic2);
         System.out.println();
 
         // И, наконец, попробуйте удалить одну из задач и один из эпиков.
-        manager.removeSubtaskById(subtask1.id);
-        manager.removeEpicById(epic2.id);
-        System.out.println(epic1);
+        manager.removeSubtaskById(subtask3);
+        manager.removeEpicById(epic2);
     }
 }

@@ -1,3 +1,5 @@
+package project.tasks;
+
 public class Task {
     protected int id;
     protected String name;
@@ -5,10 +7,13 @@ public class Task {
     protected String status;
     protected static int count;
 
+    // Конструктор по умолчанию для того, чтобы избавиться от конструктора для эпика после его переноса в класс Epic.
+    public Task() {
+    }
+
     // Конструктор для новых задач со счетчиком для id.
     public Task(String name, String description) {
-        count++;
-        id = count;
+        id = ++count;
         this.name = name;
         this.description = description;
         this.status = "NEW"; // все новые задачи создаются по умолчанию со статусом NEW
@@ -16,17 +21,17 @@ public class Task {
 
     // Конструктор для обновления задач без счетчика и с обновлением статуса.
     public Task(int id, String name, String description, String status) {
+        this(name, description);
         this.id = id;
-        this.name = name;
-        this.description = description;
         this.status = status;
     }
 
-    // Конструктор для обновления эпика без счетчика и статуса, т.к. последний рассчитывается менеджером.
-    public Task(int id, String name, String description) {
+    public void setId(int id) {
         this.id = id;
-        this.name = name;
-        this.description = description;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override

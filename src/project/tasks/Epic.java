@@ -1,7 +1,9 @@
+package project.tasks;
+
 import java.util.HashMap;
 
 public class Epic extends Task {
-    HashMap<Integer, Subtask> epicSubtasks;
+    private HashMap<Integer, Subtask> epicSubtasks;
 
     // Конструктор для создания эпика.
     public Epic(String name, String description) {
@@ -12,7 +14,9 @@ public class Epic extends Task {
 
     // Конструктор для обновления эпика.
     public Epic(int id, String name, String description, HashMap<Integer, Subtask> epicSubtasks) {
-        super(id, name, description);
+        this.id = id;
+        this.name = name;
+        this.description = description;
         this.epicSubtasks = epicSubtasks;
         calculateEpicStatus();
     }
@@ -28,6 +32,7 @@ public class Epic extends Task {
                     break;
                 case "DONE":
                     countDone++;
+                    break;
             }
         }
 
@@ -39,6 +44,25 @@ public class Epic extends Task {
         } else {
             this.status = "IN_PROGRESS";
         }
+    }
+
+    public void addSubtask(Subtask subtask) {
+        epicSubtasks.put(subtask.id, subtask);
+        calculateEpicStatus();
+    }
+
+    public void deleteSubtask(int subtaskId) {
+        epicSubtasks.remove(subtaskId);
+        calculateEpicStatus();
+    }
+
+    public void clearSubtask() {
+        epicSubtasks.clear();
+        calculateEpicStatus();
+    }
+
+    public HashMap<Integer, Subtask> getEpicSubtasks() {
+        return epicSubtasks;
     }
 
     @Override
