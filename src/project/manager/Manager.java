@@ -78,32 +78,52 @@ public class Manager {
     }
 
     public void updateSubtask(Subtask subtask) {
+        int oldEpicId = mapOfSubtasks.get(subtask.getId()).getEpicId(); // получаем и сохраняем старый эпик
+        boolean isNewEpic = subtask.getEpicId() != oldEpicId; // проверка на новый эпик
+        if (isNewEpic) {
+            mapOfEpics.get(oldEpicId).deleteSubtask(subtask.getId()); // удаление подзадачи из старого эпика
+        }
+        mapOfEpics.get(subtask.getEpicId()).addSubtask(subtask); // обновляем подзадачу в ее эпике и пересчитываем статус
         mapOfSubtasks.put(subtask.getId(), subtask);
     }
 
     // Методы для удаления задачи по идентификатору соответствующей коллекции
-    public void removeTaskById(Task task) {
-        if (mapOfTasks.containsKey(task.getId())) {
-            mapOfTasks.remove(task.getId());
+    public void removeTaskById(int taskId) {
+        if (mapOfTasks.containsKey(taskId)) {
+            mapOfTasks.remove(taskId);
         } else {
             System.out.println("Задачи с таким идентификатором не существует!");
         }
     }
 
-    public void removeEpicById(Epic epic) {
-        if (mapOfEpics.containsKey(epic.getId())) {
-            epic.clearSubtask(); // очищаем эпик от подзадач
-            mapOfEpics.remove(epic.getId()); // удаляем сам эпик из таблицы эпиков
+    public void removeEpicById(int epicId) {
+        if (mapOfEpics.containsKey(epicId)) {
+            mapOfEpics.remove(epicId); // удаляем сам эпик из таблицы эпиков
+
+            // удаляем подзадачи связанные с этим эпиком со списка подзадач
+            ArrayList<Integer> subtaskIds = new ArrayList<>(); // отдельный список для id подзадач удаленного эпика
+            for (Subtask value : mapOfSubtasks.values()) {
+                if (value.getEpicId() == epicId) {
+                    subtaskIds.add(value.getId());
+                }
+            }
+
+            for (Integer subtaskId : subtaskIds) {
+                mapOfSubtasks.remove(subtaskId); // проходимся по списку подзадач и удаляем собранные id на строке 107
+            }
+            /* Примечание: эти приседания с дополнительным списком ArrayList<Integer> subtaskIds для id подзадач
+            * удаленного эпика сделаны, чтобы избежать ошибки ConcurrentModificationException, которая возникает когда
+            * я сразу пытаюсь использовать на 107 строке конструкцию mapOfSubtasks.remove(value.getId()); */
         } else {
             System.out.println("Эпика с таким идентификатором не существует!");
         }
     }
 
-    public void removeSubtaskById(Subtask subtask) {
-        if (mapOfSubtasks.containsKey(subtask.getId())) {
-            int epicId = mapOfSubtasks.get(subtask.getId()).getEpicId(); // получаем id эпика, в котором содержится подзадача
-            mapOfEpics.get(epicId).deleteSubtask(subtask.getId()); // удаляем эту подзадачу в ее эпике и пересчитываем статус эпика
-            mapOfSubtasks.remove(subtask.getId()); // удаляем саму подзадачу
+    public void removeSubtaskById(int subtaskId) {
+        if (mapOfSubtasks.containsKey(subtaskId)) {
+            int epicId = mapOfSubtasks.get(subtaskId).getEpicId(); // получаем id эпика, в котором содержится подзадача
+            mapOfEpics.get(epicId).deleteSubtask(subtaskId); // удаляем эту подзадачу в ее эпике и пересчитываем статус эпика
+            mapOfSubtasks.remove(subtaskId); // удаляем саму подзадачу
         } else {
             System.out.println("Подзадачи с таким идентификатором не существует!");
         }

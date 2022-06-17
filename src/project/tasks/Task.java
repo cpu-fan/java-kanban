@@ -7,10 +7,6 @@ public class Task {
     protected String status;
     protected static int count;
 
-    // Конструктор по умолчанию для того, чтобы избавиться от конструктора для эпика после его переноса в класс Epic.
-    public Task() {
-    }
-
     // Конструктор для новых задач со счетчиком для id.
     public Task(String name, String description) {
         id = ++count;

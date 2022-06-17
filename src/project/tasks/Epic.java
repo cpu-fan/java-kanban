@@ -13,36 +13,35 @@ public class Epic extends Task {
     }
 
     // Конструктор для обновления эпика.
-    public Epic(int id, String name, String description, HashMap<Integer, Subtask> epicSubtasks) {
+    public Epic(int id, String name, String description) {
+        this(name, description);
         this.id = id;
-        this.name = name;
-        this.description = description;
-        this.epicSubtasks = epicSubtasks;
-        calculateEpicStatus();
     }
 
     public void calculateEpicStatus() {
         // Считаем количество подзадач со статусом NEW и DONE.
         int countNew = 0;
         int countDone = 0;
-        for (Subtask subtask : epicSubtasks.values()) {
-            switch (subtask.status) {
-                case "NEW":
-                    countNew++;
-                    break;
-                case "DONE":
-                    countDone++;
-                    break;
+        if (epicSubtasks != null) {
+            for (Subtask subtask : epicSubtasks.values()) {
+                switch (subtask.status) {
+                    case "NEW":
+                        countNew++;
+                        break;
+                    case "DONE":
+                        countDone++;
+                        break;
+                }
             }
-        }
 
-        // В зависимости от количества задач с определенным статусом устанавливаем статус для эпика.
-        if (epicSubtasks.isEmpty() || epicSubtasks.size() == countNew) {
-            this.status = "NEW";
-        } else if (epicSubtasks.size() == countDone) {
-            this.status = "DONE";
-        } else {
-            this.status = "IN_PROGRESS";
+            // В зависимости от количества задач с определенным статусом устанавливаем статус для эпика.
+            if (epicSubtasks.isEmpty() || epicSubtasks.size() == countNew) {
+                this.status = "NEW";
+            } else if (epicSubtasks.size() == countDone) {
+                this.status = "DONE";
+            } else {
+                this.status = "IN_PROGRESS";
+            }
         }
     }
 

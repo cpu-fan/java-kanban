@@ -13,17 +13,10 @@ public class Subtask extends Task {
     }
 
     // Конструктор для обновления подзадачи.
-    /* Для решения проблемы удаления подзадачи из старого эпика, ничего лучше пока не придумал, кроме как передавать в
-    * конструктор два эпика: старый, откуда перемещаю, и новый, куда перемещаю. Если в смене эпика нет необходимости,
-    * то указать необходимо один и тот же эпик в качестве аргументов. В таком случае удаление происходить не будет. */
-    public Subtask(Subtask subtask, String name, String description, String status, Epic oldEpic, Epic newEpic) {
-        super(subtask.id, name, description, status);
-        this.epicName = newEpic.name;
-        if (newEpic.id != oldEpic.id) {
-            oldEpic.deleteSubtask(this.id);
-        }
-        this.epicId = newEpic.id;
-        newEpic.addSubtask(this); // обновляем подзадачу в ее эпике и пересчитываем статус
+    public Subtask(int subtaskId, String name, String description, String status, Epic epic) {
+        super(subtaskId, name, description, status);
+        this.epicName = epic.name;
+        this.epicId = epic.id;
     }
 
     public String getEpicName() {

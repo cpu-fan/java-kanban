@@ -29,30 +29,29 @@ public class Main {
         manager.createSubtask(subtask3);
 
         // Распечатайте списки эпиков, задач и подзадач, через System.out.println().
-        System.out.println(task1);
-        System.out.println(task2);
-        System.out.println(epic1);
-        System.out.println(epic2);
-        System.out.println(subtask1);
-        System.out.println(subtask2);
-        System.out.println(subtask3);
+        System.out.println(manager.getListAllTasks());
+        System.out.println(manager.getListAllSubtasks());
+        System.out.println(manager.getListAllEpics());
         System.out.println();
 
         // Измените статусы созданных объектов, распечатайте. Проверьте, что статус задачи и подзадачи сохранился,
         // а статус эпика рассчитался по статусам подзадач.
         task1 = new Task(task1.getId(), "Обновление задачи", "Описываю новое обновление и меняю статус",
                 "IN_PROGRESS");
-        subtask1 = new Subtask(subtask1, "Обновление подзадачи из эпика 1",
-                "Подзадача 1, ее обновление и замена статуса", "IN_PROGRESS", epic1, epic2);
+        manager.updateTask(task1);
 
-        System.out.println(task1);
-        System.out.println(subtask1);
-        System.out.println(epic1);
-        System.out.println(epic2);
+        subtask1 = new Subtask(subtask1.getId(), "Обновление подзадачи из эпика 1",
+                "Подзадача 1, ее обновление и замена статуса", "IN_PROGRESS", epic2);
+        manager.updateSubtask(subtask1);
+
+        System.out.println(manager.getTaskById(task1.getId()));
+        System.out.println(manager.getSubtaskById(subtask1.getId()));
+        System.out.println(manager.getEpicById(epic1.getId()));
+        System.out.println(manager.getEpicById(epic2.getId()));
         System.out.println();
 
         // И, наконец, попробуйте удалить одну из задач и один из эпиков.
-        manager.removeSubtaskById(subtask3);
-        manager.removeEpicById(epic2);
+        manager.removeSubtaskById(task1.getId());
+        manager.removeEpicById(epic2.getId());
     }
 }
