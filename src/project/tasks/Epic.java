@@ -2,6 +2,8 @@ package project.tasks;
 
 import java.util.HashMap;
 
+import static project.tasks.TaskStatuses.*;
+
 public class Epic extends Task {
     private HashMap<Integer, Subtask> epicSubtasks;
 
@@ -25,10 +27,10 @@ public class Epic extends Task {
         if (epicSubtasks != null) {
             for (Subtask subtask : epicSubtasks.values()) {
                 switch (subtask.status) {
-                    case "NEW":
+                    case NEW:
                         countNew++;
                         break;
-                    case "DONE":
+                    case DONE:
                         countDone++;
                         break;
                 }
@@ -36,11 +38,11 @@ public class Epic extends Task {
 
             // В зависимости от количества задач с определенным статусом устанавливаем статус для эпика.
             if (epicSubtasks.isEmpty() || epicSubtasks.size() == countNew) {
-                this.status = "NEW";
+                this.status = NEW;
             } else if (epicSubtasks.size() == countDone) {
-                this.status = "DONE";
+                this.status = DONE;
             } else {
-                this.status = "IN_PROGRESS";
+                this.status = IN_PROGRESS;
             }
         }
     }

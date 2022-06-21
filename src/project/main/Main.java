@@ -4,6 +4,7 @@ import project.manager.Manager;
 import project.tasks.Epic;
 import project.tasks.Subtask;
 import project.tasks.Task;
+import project.tasks.TaskStatuses;
 
 public class Main {
 
@@ -37,11 +38,11 @@ public class Main {
         // Измените статусы созданных объектов, распечатайте. Проверьте, что статус задачи и подзадачи сохранился,
         // а статус эпика рассчитался по статусам подзадач.
         task1 = new Task(task1.getId(), "Обновление задачи", "Описываю новое обновление и меняю статус",
-                "IN_PROGRESS");
+                TaskStatuses.IN_PROGRESS);
         manager.updateTask(task1);
 
         subtask1 = new Subtask(subtask1.getId(), "Обновление подзадачи из эпика 1",
-                "Подзадача 1, ее обновление и замена статуса", "IN_PROGRESS", epic2);
+                "Подзадача 1, ее обновление и замена статуса", TaskStatuses.IN_PROGRESS, epic2);
         manager.updateSubtask(subtask1);
 
         System.out.println(manager.getTaskById(task1.getId()));

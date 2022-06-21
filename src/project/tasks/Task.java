@@ -4,7 +4,7 @@ public class Task {
     protected int id;
     protected String name;
     protected String description;
-    protected String status;
+    protected TaskStatuses status;
     protected static int count;
 
     // Конструктор для новых задач со счетчиком для id.
@@ -12,11 +12,11 @@ public class Task {
         id = ++count;
         this.name = name;
         this.description = description;
-        this.status = "NEW"; // все новые задачи создаются по умолчанию со статусом NEW
+        this.status = TaskStatuses.NEW; // все новые задачи создаются по умолчанию со статусом NEW
     }
 
     // Конструктор для обновления задач без счетчика и с обновлением статуса.
-    public Task(int id, String name, String description, String status) {
+    public Task(int id, String name, String description, TaskStatuses status) {
         this(name, description);
         this.id = id;
         this.status = status;

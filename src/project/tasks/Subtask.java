@@ -13,7 +13,7 @@ public class Subtask extends Task {
     }
 
     // Конструктор для обновления подзадачи.
-    public Subtask(int subtaskId, String name, String description, String status, Epic epic) {
+    public Subtask(int subtaskId, String name, String description, TaskStatuses status, Epic epic) {
         super(subtaskId, name, description, status);
         this.epicName = epic.name;
         this.epicId = epic.id;
