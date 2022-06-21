@@ -7,7 +7,7 @@ import project.tasks.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
 
     // Хранение каждого типа задачи в отдельной коллекции
     private HashMap<Integer, Task> mapOfTasks = new HashMap<>();
@@ -15,19 +15,23 @@ public class Manager {
     private HashMap<Integer, Subtask> mapOfSubtasks = new HashMap<>();
 
     // Методы для помещения созданной задачи в коллекцию своего типа
+    @Override
     public void createTask(Task task) {
         mapOfTasks.put(task.getId(), task);
     }
 
+    @Override
     public void createEpic(Epic epic) {
         mapOfEpics.put(epic.getId(), epic);
     }
 
+    @Override
     public void createSubtask(Subtask subtask) {
         mapOfSubtasks.put(subtask.getId(), subtask);
     }
 
     // Методы для получения задачи по ее идентификатору из соответствующей коллекции
+    @Override
     public Task getTaskById(int id) {
         if (mapOfTasks.containsKey(id)) {
             return mapOfTasks.get(id);
@@ -37,6 +41,7 @@ public class Manager {
         }
     }
 
+    @Override
     public Epic getEpicById(int id) {
         if (mapOfEpics.containsKey(id)) {
             return mapOfEpics.get(id);
@@ -46,6 +51,7 @@ public class Manager {
         }
     }
 
+    @Override
     public Subtask getSubtaskById(int id) {
         if (mapOfSubtasks.containsKey(id)) {
             return mapOfSubtasks.get(id);
@@ -56,27 +62,33 @@ public class Manager {
     }
 
     // Методы для получения списка всех задач из соответствующей коллекции
+    @Override
     public ArrayList<Task> getListAllTasks() {
         return new ArrayList<>(mapOfTasks.values());
     }
 
+    @Override
     public ArrayList<Epic> getListAllEpics() {
         return new ArrayList<>(mapOfEpics.values());
     }
 
+    @Override
     public ArrayList<Subtask> getListAllSubtasks() {
         return new ArrayList<>(mapOfSubtasks.values());
     }
 
     // Методы для обновления задач соответствующей коллекции
+    @Override
     public void updateTask(Task task) {
         mapOfTasks.put(task.getId(), task);
     }
 
+    @Override
     public void updateEpic(Epic epic) {
         mapOfEpics.put(epic.getId(), epic);
     }
 
+    @Override
     public void updateSubtask(Subtask subtask) {
         int oldEpicId = mapOfSubtasks.get(subtask.getId()).getEpicId(); // получаем и сохраняем старый эпик
         boolean isNewEpic = subtask.getEpicId() != oldEpicId; // проверка на новый эпик
@@ -88,6 +100,7 @@ public class Manager {
     }
 
     // Методы для удаления задачи по идентификатору соответствующей коллекции
+    @Override
     public void removeTaskById(int taskId) {
         if (mapOfTasks.containsKey(taskId)) {
             mapOfTasks.remove(taskId);
@@ -96,6 +109,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void removeEpicById(int epicId) {
         if (mapOfEpics.containsKey(epicId)) {
             mapOfEpics.remove(epicId); // удаляем сам эпик из таблицы эпиков
@@ -119,6 +133,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void removeSubtaskById(int subtaskId) {
         if (mapOfSubtasks.containsKey(subtaskId)) {
             int epicId = mapOfSubtasks.get(subtaskId).getEpicId(); // получаем id эпика, в котором содержится подзадача
@@ -130,15 +145,18 @@ public class Manager {
     }
 
     // Методы для удаления всех задач в соответствующей коллекции
+    @Override
     public void deleteAllTasks() {
         mapOfTasks.clear();
     }
 
+    @Override
     public void deleteAllEpics() {
         mapOfEpics.clear();
         mapOfSubtasks.clear();
     }
 
+    @Override
     public void deleteAllSubtasks() {
         mapOfSubtasks.clear();
         // также очищаем подзадачи в эпиках
@@ -148,6 +166,7 @@ public class Manager {
     }
 
     // Метод для получения списка всех подзадач определённого эпика.
+    @Override
     public HashMap<Integer, Subtask> getListAllSubtasksByEpic(Epic epic) {
         return epic.getEpicSubtasks();
     }

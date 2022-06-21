@@ -1,6 +1,6 @@
 package project.main;
 
-import project.manager.Manager;
+import project.manager.InMemoryTaskManager;
 import project.tasks.Epic;
 import project.tasks.Subtask;
 import project.tasks.Task;
@@ -9,7 +9,7 @@ import project.tasks.TaskStatuses;
 public class Main {
 
     public static void main(String[] args) {
-        Manager manager = new Manager();
+        InMemoryTaskManager manager = new InMemoryTaskManager();
 
         // Создайте 2 задачи, один эпик с 2 подзадачами, а другой эпик с 1 подзадачей.
         Task task1 = new Task("task1", "desc for task1");
@@ -52,7 +52,7 @@ public class Main {
         System.out.println();
 
         // И, наконец, попробуйте удалить одну из задач и один из эпиков.
-        manager.removeSubtaskById(task1.getId());
+        manager.removeSubtaskById(subtask1.getId());
         manager.removeEpicById(epic2.getId());
     }
 }
