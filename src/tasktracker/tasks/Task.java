@@ -1,15 +1,15 @@
-package project.tasks;
+package tasktracker.tasks;
 
 public class Task {
     protected int id;
     protected String name;
     protected String description;
     protected TaskStatuses status;
-    protected static int count;
+    protected static int countTaskId;
 
     // Конструктор для новых задач со счетчиком для id.
     public Task(String name, String description) {
-        id = ++count;
+        id = ++countTaskId;
         this.name = name;
         this.description = description;
         this.status = TaskStatuses.NEW; // все новые задачи создаются по умолчанию со статусом NEW

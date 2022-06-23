@@ -1,8 +1,8 @@
-package project.tasks;
+package tasktracker.tasks;
 
 import java.util.HashMap;
 
-import static project.tasks.TaskStatuses.*;
+import static tasktracker.tasks.TaskStatuses.*;
 
 public class Epic extends Task {
     private HashMap<Integer, Subtask> epicSubtasks;

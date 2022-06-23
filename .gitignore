@@ -41,7 +41,7 @@ hs_err_pid*
 .idea/gradle.xml
 .idea/libraries
 
-## File-based project format:
+## File-based tasktracker format:
 *.iws
 
 ## Plugin-specific files:
