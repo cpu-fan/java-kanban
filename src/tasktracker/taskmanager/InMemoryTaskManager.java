@@ -8,6 +8,7 @@ import tasktracker.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -179,9 +180,10 @@ public class InMemoryTaskManager implements TaskManager {
         return epic.getEpicSubtasks();
     }
 
+    // Метод для получения списка истории просмотренных задач
     @Override
-    public HistoryManager getHistoryList() {
-        return historyList;
+    public List<Task> getHistoryList() {
+        return historyList.getHistory();
     }
 
     @Override

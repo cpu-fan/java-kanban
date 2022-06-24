@@ -1,20 +1,17 @@
 package tasktracker.taskmanager;
 
-import tasktracker.historymanager.HistoryManager;
 import tasktracker.tasks.Epic;
 import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public interface TaskManager {
 
     // Метод для возврата списка истории просмотра задач
-    HistoryManager getHistoryList();
-    /* Насколько здесь, в TaskManager, было корректно добавлять метод getHistoryList() для возврата списка истории?
-    * Ведь похожий метод имеется и в HistoryManager. Это считается дублированием кода?
-    * В этом моменте немного запутался... */
+    List<Task> getHistoryList();
 
     // Методы для помещения созданной задачи в коллекцию своего типа
     void createTask(Task task);

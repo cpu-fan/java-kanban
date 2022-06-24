@@ -33,12 +33,12 @@ public class Main {
         // Cоздайте несколько задач разного типа и вызовите разные методы интерфейса TaskManager и напечатайте историю
         // просмотров после каждого вызова. Если код рабочий, то история просмотров задач будет отображаться корректно.
         taskManager.getTaskById(task2.getId());
-        System.out.println(taskManager.getHistoryList().getHistory());
+        System.out.println(taskManager.getHistoryList());
 
         taskManager.getSubtaskById(subtask3.getId());
-        System.out.println(taskManager.getHistoryList().getHistory());
+        System.out.println(taskManager.getHistoryList());
 
         taskManager.getEpicById(epic1.getId());
-        System.out.println(taskManager.getHistoryList().getHistory());
+        System.out.println(taskManager.getHistoryList());
     }
 }
