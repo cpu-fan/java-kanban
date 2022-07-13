@@ -13,7 +13,7 @@ import java.util.List;
 public class InMemoryTaskManager implements TaskManager {
 
     // Хранение истории просмотра задач
-    private final HistoryManager historyList = Managers.getDefaultHistory();
+    private final HistoryManager history = Managers.getDefaultHistory();
 
     // Хранение каждого типа задачи в отдельной коллекции
     private final HashMap<Integer, Task> mapOfTasks = new HashMap<>();
@@ -40,7 +40,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(int id) {
         if (mapOfTasks.containsKey(id)) {
-            historyList.addToHistory(mapOfTasks.get(id));
+            history.addToHistory(mapOfTasks.get(id));
             return mapOfTasks.get(id);
         } else {
             System.out.println("Задачи с таким идентификатором не существует");
@@ -51,7 +51,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpicById(int id) {
         if (mapOfEpics.containsKey(id)) {
-            historyList.addToHistory(mapOfEpics.get(id));
+            history.addToHistory(mapOfEpics.get(id));
             return mapOfEpics.get(id);
         } else {
             System.out.println("Эпика с таким идентификатором не существует");
@@ -62,7 +62,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask getSubtaskById(int id) {
         if (mapOfSubtasks.containsKey(id)) {
-            historyList.addToHistory(mapOfSubtasks.get(id));
+            history.addToHistory(mapOfSubtasks.get(id));
             return mapOfSubtasks.get(id);
         } else {
             System.out.println("Подзадачи с таким идентификатором не существует");
@@ -182,8 +182,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Метод для получения списка истории просмотренных задач
     @Override
-    public List<Task> getHistoryList() {
-        return historyList.getHistory();
+    public List<Task> getHistory() {
+        return history.getHistory();
     }
 
     @Override

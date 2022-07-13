@@ -11,7 +11,7 @@ import java.util.List;
 public interface TaskManager {
 
     // Метод для возврата списка истории просмотра задач
-    List<Task> getHistoryList();
+    List<Task> getHistory();
 
     // Методы для помещения созданной задачи в коллекцию своего типа
     void createTask(Task task);
