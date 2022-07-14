@@ -9,10 +9,7 @@ import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    // Список для хранения истории просмотра задач
-    private final List<Task> historyList = new ArrayList<>(); // old version, потом удалить
-
-    // (новая реализация) Хэш-таблица для хранения связки id и узлов
+    // Хэш-таблица для хранения связки id и узлов
     private final Map<Integer, Node> nodeMap = new HashMap<>();
 
     private Node head;
@@ -33,35 +30,40 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void addToHistory(Task task) {
         linkLast(task);
         nodeMap.put(task.getId(), tail);
-//        historyList.add(task); // old version
     }
 
     @Override
     public List<Task> getHistory() {
-//        return historyList; // old version
         List<Task> historyList = new ArrayList<>();
         for (Node value : nodeMap.values()) {
             historyList.add(value.task);
         }
-//        List<Task> historyList = new ArrayList<>();
-//        Node node = head;
-//        while (head != null) {
-//            historyList.add(node.task);
-//            if (node.next == null) break;
-//            node = node.next;
-//        }
         return historyList;
     }
 
     @Override
     public void remove(int id) {
-        historyList.remove(id);
+        Node node = nodeMap.get(id);
+        removeNode(node);
+    }
+
+    private void removeNode(Node node) {
+        if (node == null) return;
+
+        if (node.prev != null && node.next != null) {
+            node.prev.next = node.next;
+            node.next.prev = node.prev;
+        } else if (node.prev == null && node.next != null) {
+            head = node.next;
+        } else if (node.prev != null && node.next == null) {
+            tail = node.prev;
+        }
     }
 
     @Override
     public String toString() {
         return "InMemoryHistoryManager{" +
-                "historyList=" + historyList +
+                "nodeMap=" + nodeMap +
                 '}';
     }
 
