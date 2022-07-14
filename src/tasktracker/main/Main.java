@@ -24,5 +24,7 @@ public class Main {
         taskManager.getTaskById(task3.getId());
         System.out.println(taskManager.getHistory());
 
+        taskManager.getTaskById(task1.getId());
+        System.out.println(taskManager.getHistory());
     }
 }

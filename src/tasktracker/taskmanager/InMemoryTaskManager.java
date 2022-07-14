@@ -112,6 +112,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeTaskById(int taskId) {
         if (mapOfTasks.containsKey(taskId)) {
+            history.remove(taskId);
             mapOfTasks.remove(taskId);
         } else {
             System.out.println("Задачи с таким идентификатором не существует!");
