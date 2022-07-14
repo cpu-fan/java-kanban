@@ -112,8 +112,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeTaskById(int taskId) {
         if (mapOfTasks.containsKey(taskId)) {
-            history.remove(taskId);
-            mapOfTasks.remove(taskId);
+            history.remove(taskId); // удаляем задачу из истории
+            mapOfTasks.remove(taskId); // удаляем саму задачу
         } else {
             System.out.println("Задачи с таким идентификатором не существует!");
         }
@@ -122,6 +122,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeEpicById(int epicId) {
         if (mapOfEpics.containsKey(epicId)) {
+            history.remove(epicId);
             mapOfEpics.remove(epicId); // удаляем сам эпик из таблицы эпиков
 
             // удаляем подзадачи связанные с этим эпиком со списка подзадач
@@ -133,6 +134,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
 
             for (Integer subtaskId : subtaskIds) {
+                history.remove(subtaskId); // удаляем подзадачи из истории
                 mapOfSubtasks.remove(subtaskId); // проходимся по списку подзадач и удаляем собранные id на строке 107
             }
             /* Примечание: эти приседания с дополнительным списком ArrayList<Integer> subtaskIds для id подзадач
@@ -149,6 +151,7 @@ public class InMemoryTaskManager implements TaskManager {
             int epicId = mapOfSubtasks.get(subtaskId).getEpicId(); // получаем id эпика, в котором содержится подзадача
             mapOfEpics.get(epicId).deleteSubtask(subtaskId); // удаляем эту подзадачу в ее эпике и пересчитываем статус эпика
             mapOfSubtasks.remove(subtaskId); // удаляем саму подзадачу
+            history.remove(subtaskId); // удаляем подзадачу из истории
         } else {
             System.out.println("Подзадачи с таким идентификатором не существует!");
         }
