@@ -160,18 +160,31 @@ public class InMemoryTaskManager implements TaskManager {
     // Методы для удаления всех задач в соответствующей коллекции
     @Override
     public void deleteAllTasks() {
+        // удаляем все таски из истории
+        for (Integer taskId : mapOfTasks.keySet()) {
+            history.remove(taskId);
+        }
         mapOfTasks.clear();
     }
 
     @Override
     public void deleteAllEpics() {
+        // удаляем все эпики и их сабтаски из истории
+        for (Subtask subtask : mapOfSubtasks.values()) {
+            history.remove(subtask.getEpicId());
+            history.remove(subtask.getId());
+        }
         mapOfEpics.clear();
         mapOfSubtasks.clear();
     }
 
     @Override
     public void deleteAllSubtasks() {
-        mapOfSubtasks.clear();
+        // удаляем все сабтаски из истории
+        for (Integer subtaskId : mapOfSubtasks.keySet()) {
+            history.remove(subtaskId);
+        }
+        mapOfSubtasks.clear(); // очищаем сам список сабтасок
         // также очищаем подзадачи в эпиках
         for (Epic epic : mapOfEpics.values()) {
             epic.getEpicSubtasks().clear();
