@@ -5,6 +5,7 @@ public class Task {
     protected String name;
     protected String description;
     protected TaskStatuses status;
+    protected String epic = "";
     protected static int countTaskId;
 
     // Конструктор для новых задач со счетчиком для id.
@@ -38,5 +39,16 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
                 '}';
+    }
+
+    public static String toString(Task task) {
+        String taskType = String.valueOf(TaskTypes.TASK);
+        if (task.getClass().equals(Epic.class)) {
+            taskType = String.valueOf(TaskTypes.EPIC);
+        } else {
+            taskType = String.valueOf(TaskTypes.SUBTASK);
+        }
+        return task.id + "," + taskType + "," + task.name + ","
+                + task.status + "," + task.description + "," + task.epic;
     }
 }

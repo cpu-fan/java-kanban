@@ -1,14 +1,30 @@
 package tasktracker.main;
 
 import tasktracker.managers.Managers;
+import tasktracker.taskmanager.FileBackedTaskManager;
 import tasktracker.taskmanager.TaskManager;
 import tasktracker.tasks.Epic;
 import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class Main {
 
+    private static final String FILE_PATH = "src/tasktracker/taskmanager/files/tasks.csv";
+
     public static void main(String[] args) {
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(FILE_PATH);
+
+        Task task01 = new Task("task01", "desc for task01");
+        Epic epic01 = new Epic("epic01", "desc for epic01");
+        Subtask subtask01 = new Subtask("subtask01", "desc for subtask01", epic01);
+        fileBackedTaskManager.createTask(task01);
+        fileBackedTaskManager.createTask(epic01);
+        fileBackedTaskManager.createTask(subtask01);
+
+
         TaskManager taskManager = Managers.getDefault();
 
         // 1. создайте две задачи, эпик с тремя подзадачами и эпик без подзадач
