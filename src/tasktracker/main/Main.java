@@ -6,6 +6,7 @@ import tasktracker.taskmanager.TaskManager;
 import tasktracker.tasks.Epic;
 import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
+import tasktracker.tasks.TaskStatuses;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,8 +22,11 @@ public class Main {
         Epic epic01 = new Epic("epic01", "desc for epic01");
         Subtask subtask01 = new Subtask("subtask01", "desc for subtask01", epic01);
         fileBackedTaskManager.createTask(task01);
-        fileBackedTaskManager.createTask(epic01);
-        fileBackedTaskManager.createTask(subtask01);
+        fileBackedTaskManager.createEpic(epic01);
+        fileBackedTaskManager.createSubtask(subtask01);
+
+        task01 = new Task(task01.getId(), "task01 edited", "edited desk", TaskStatuses.IN_PROGRESS);
+        fileBackedTaskManager.updateTask(task01);
 
 
         TaskManager taskManager = Managers.getDefault();

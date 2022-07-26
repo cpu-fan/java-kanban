@@ -5,7 +5,7 @@ public class Task {
     protected String name;
     protected String description;
     protected TaskStatuses status;
-    protected String epic = "";
+    protected int epicId;
     protected static int countTaskId;
 
     // Конструктор для новых задач со счетчиком для id.
@@ -42,13 +42,20 @@ public class Task {
     }
 
     public static String toString(Task task) {
-        String taskType = String.valueOf(TaskTypes.TASK);
-        if (task.getClass().equals(Epic.class)) {
+        String taskType; // для изменения из enum в String
+        String epicId; // для изменения из int в String (для Task и Epic присваивается пустое значение - "")
+
+        if (task.getClass().equals(Task.class)) {
+            taskType = String.valueOf(TaskTypes.TASK);
+            epicId = "";
+        } else if (task.getClass().equals(Epic.class)) {
             taskType = String.valueOf(TaskTypes.EPIC);
+            epicId = "";
         } else {
             taskType = String.valueOf(TaskTypes.SUBTASK);
+            epicId = String.valueOf(task.epicId);
         }
         return task.id + "," + taskType + "," + task.name + ","
-                + task.status + "," + task.description + "," + task.epic;
+                + task.status + "," + task.description + "," + epicId;
     }
 }

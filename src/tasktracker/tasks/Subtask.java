@@ -2,7 +2,7 @@ package tasktracker.tasks;
 
 public class Subtask extends Task {
     private String epicName;
-    private int epicId;
+//    private int epicId;
 
     // Конструктор для создания новой подзадачи и помещения в эпик.
     public Subtask(String name, String description, Epic epic) {

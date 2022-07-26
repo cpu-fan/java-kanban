@@ -1,4 +1,5 @@
 id,type,name,status,description,epic
-1,SUBTASK,task01,NEW,desc for task01,
+1,TASK,task01,NEW,desc for task01,
 2,EPIC,epic01,NEW,desc for epic01,
-3,SUBTASK,subtask01,NEW,desc for subtask01,
+3,SUBTASK,subtask01,NEW,desc for subtask01,2
+1,TASK,task01 edited,IN_PROGRESS,edited desk,
