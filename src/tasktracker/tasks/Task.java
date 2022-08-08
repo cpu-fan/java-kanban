@@ -23,33 +23,6 @@ public class Task {
         this.status = status;
     }
 
-    // ???
-//    public void setId(int id) {
-//        this.id = id;
-//    }
-
-      // 3
-//    @Override
-//    public String toString() {
-//        return "Task{" +
-//                "id=" + id +
-//                ", name='" + name + '\'' +
-//                ", description='" + description + '\'' +
-//                ", status='" + status + '\'' +
-//                '}';
-//    }
-
-    @Override
-    public String toString() {
-        return String.format("%s, %s, %s, %s, %s, %s",
-                getId(),
-                getType(),
-                getName(),
-                getStatus(),
-                getDescription(),
-                "");
-    }
-
     public int getId() {
         return id;
     }
@@ -68,37 +41,25 @@ public class Task {
         return name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public TaskStatuses getStatus() {
         return status;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public int getEpicId() {
         return epicId;
     }
 
-    public static int getCountTaskId() {
-        return countTaskId;
+    @Override
+    public String toString() {
+        return String.format("%s, %s, %s, %s, %s,",
+                getId(),
+                getType(),
+                getName(),
+                getStatus(),
+                getDescription());
     }
-// 1
-//    public static String toString(Task task) {
-//        String taskType; // для изменения из enum в String
-//        String epicId; // для изменения из int в String (для Task и Epic присваивается пустое значение - "")
-//
-//        if (task.getClass().equals(Task.class)) {
-//            taskType = String.valueOf(TaskTypes.TASK);
-//            epicId = "";
-//        } else if (task.getClass().equals(Epic.class)) {
-//            taskType = String.valueOf(TaskTypes.EPIC);
-//            epicId = "";
-//        } else {
-//            taskType = String.valueOf(TaskTypes.SUBTASK);
-//            epicId = String.valueOf(task.epicId);
-//        }
-//        return task.id + "," + taskType + "," + task.name + ","
-//                + task.status + "," + task.description + "," + epicId;
-//    }
 }

@@ -1,15 +1,13 @@
 package tasktracker.taskmanager;
 
 import tasktracker.historymanager.HistoryManager;
+import tasktracker.historymanager.InMemoryHistoryManager;
 import tasktracker.managers.Managers;
 import tasktracker.tasks.Epic;
 import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -204,16 +202,6 @@ public class InMemoryTaskManager implements TaskManager {
         return history.getHistory();
     }
 
-    // 3
-//    @Override
-//    public String toString() {
-//        return "Manager{" +
-//                "mapOfTasks=" + mapOfTasks +
-//                ", mapOfEpics=" + mapOfEpics +
-//                ", mapOfSubtasks=" + mapOfSubtasks +
-//                '}';
-//    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -229,7 +217,15 @@ public class InMemoryTaskManager implements TaskManager {
         return sb.toString();
     }
 
-    public InMemoryTaskManager getInMemoryManager() {
-        return this;
+    public String toStringHistoryManager() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < getHistory().size(); i++) {
+            if (i == getHistory().size() - 1) {
+                sb.append(getHistory().get(i).getId());
+                continue;
+            }
+            sb.append(getHistory().get(i).getId() + ",");
+        }
+        return sb.toString();
     }
 }

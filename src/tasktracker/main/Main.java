@@ -22,10 +22,10 @@ public class Main {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(FILE_PATH);
 
         Task task01 = new Task("task01", "desc for task01");
-        Task task02 = new Task("task02", "desc for task02");
-        Task task03 = new Task("task03", "desc for task03");
         Epic epic01 = new Epic("epic01", "desc for epic01");
+        Task task02 = new Task("task02", "desc for task02");
         Subtask subtask01 = new Subtask("subtask01", "desc for subtask01", epic01);
+        Task task03 = new Task("task03", "desc for task03");
         fileBackedTaskManager.createTask(task01);
         fileBackedTaskManager.createTask(task02);
         fileBackedTaskManager.createTask(task03);
@@ -34,6 +34,12 @@ public class Main {
 
         task01 = new Task(task01.getId(), "task01 edited", "edited desk", TaskStatuses.IN_PROGRESS);
         fileBackedTaskManager.updateTask(task01);
+
+        fileBackedTaskManager.getTaskById(task03.getId());
+        fileBackedTaskManager.getEpicById(epic01.getId());
+        fileBackedTaskManager.getTaskById(task01.getId());
+        fileBackedTaskManager.getTaskById(task02.getId());
+        fileBackedTaskManager.getSubtaskById(subtask01.getId());
 
 
 //        TaskManager taskManager = Managers.getDefault();
