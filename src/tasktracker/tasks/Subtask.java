@@ -27,15 +27,28 @@ public class Subtask extends Task {
         return epicId;
     }
 
+    // 3
+//    @Override
+//    public String toString() {
+//        return "Subtask{" +
+//                "id=" + id +
+//                ", name='" + name + '\'' +
+//                ", description='" + description + '\'' +
+//                ", status='" + status + '\'' +
+//                ", epicId=" + epicId +
+//                ", epicName='" + epicName + '\'' +
+//                '}';
+//    }
+
     @Override
     public String toString() {
-        return "Subtask{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status='" + status + '\'' +
-                ", epicId=" + epicId +
-                ", epicName='" + epicName + '\'' +
-                '}';
+        return super.toString() + getEpicId();
+//        return String.format("%s, %s, %s, %s, %s, %s",
+//                getId(),
+//                getType(),
+//                getName(),
+//                getStatus(),
+//                getDescription(),
+//                getEpicId());
     }
 }

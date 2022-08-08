@@ -9,6 +9,7 @@ import tasktracker.tasks.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -203,12 +204,32 @@ public class InMemoryTaskManager implements TaskManager {
         return history.getHistory();
     }
 
+    // 3
+//    @Override
+//    public String toString() {
+//        return "Manager{" +
+//                "mapOfTasks=" + mapOfTasks +
+//                ", mapOfEpics=" + mapOfEpics +
+//                ", mapOfSubtasks=" + mapOfSubtasks +
+//                '}';
+//    }
+
     @Override
     public String toString() {
-        return "Manager{" +
-                "mapOfTasks=" + mapOfTasks +
-                ", mapOfEpics=" + mapOfEpics +
-                ", mapOfSubtasks=" + mapOfSubtasks +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        for (Task value : mapOfTasks.values()) {
+            sb.append(value + "\n");
+        }
+        for (Task value : mapOfEpics.values()) {
+            sb.append(value + "\n");
+        }
+        for (Task value : mapOfSubtasks.values()) {
+            sb.append(value + "\n");
+        }
+        return sb.toString();
+    }
+
+    public InMemoryTaskManager getInMemoryManager() {
+        return this;
     }
 }

@@ -66,14 +66,20 @@ public class Epic extends Task {
         return epicSubtasks;
     }
 
+    // 3
+//    @Override
+//    public String toString() {
+//        return "Epic{" +
+//                "id=" + id +
+//                ", name='" + name + '\'' +
+//                ", description='" + description + '\'' +
+//                ", status='" + status + '\'' +
+//                ", epicSubtasks=" + epicSubtasks +
+//                '}';
+//    }
+
     @Override
     public String toString() {
-        return "Epic{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status='" + status + '\'' +
-                ", epicSubtasks=" + epicSubtasks +
-                '}';
+        return super.toString();
     }
 }
