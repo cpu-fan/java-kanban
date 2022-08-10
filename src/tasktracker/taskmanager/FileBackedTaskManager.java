@@ -59,8 +59,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             // Разбиваем текст на линии, которые представляют собой информацию о таске
             String[] lines = text.split(System.lineSeparator());
             for (int i = 1; i < lines.length; i++) {
-                Task task = taskManager.fromString(lines[i]);
-                taskManager.createTask(task);
+                switch (lines[i].split(",")[1]) {
+                    case "TASK":
+                        Task task = taskManager.fromString(lines[i]);
+                        taskManager.createTask(task);
+                        break;
+                    case "EPIC":
+                        Task epic = taskManager.fromString(lines[i]);
+                        taskManager.createEpic((Epic) epic);
+                        break;
+                    case "SUBTASK":
+                        Task subtask = taskManager.fromString(lines[i]);
+                        taskManager.createSubtask((Subtask) subtask);
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e); // здесь свое или стандартное?
