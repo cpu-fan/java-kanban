@@ -18,6 +18,7 @@ public class Epic extends Task {
     public Epic(int id, String name, String description) {
         this(name, description);
         this.id = id;
+//        calculateEpicStatus();
     }
 
     public void calculateEpicStatus() {

@@ -10,9 +10,6 @@ import java.util.List;
 
 public interface TaskManager {
 
-    // Метод для возврата списка истории просмотра задач
-    List<Task> getHistory();
-
     // Методы для помещения созданной задачи в коллекцию своего типа
     void createTask(Task task);
     void createEpic(Epic epic);
@@ -45,4 +42,10 @@ public interface TaskManager {
 
     // Метод для получения списка всех подзадач определённого эпика.
     HashMap<Integer, Subtask> getListAllSubtasksByEpic(Epic epic);
+
+    // Метод для возврата списка истории просмотра задач
+    List<Task> getHistory();
+
+    // Метод для сохранения истории просмотров в строку в том виде, который нужен для csv файла
+    public String historyToString();
 }

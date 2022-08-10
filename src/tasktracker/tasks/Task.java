@@ -23,6 +23,13 @@ public class Task {
         this.status = status;
     }
 
+    // Конструктор для создания задачи (и эпика?) из строки.
+    public Task(int id, String name, String description, String status) {
+        this(name, description);
+        this.id = id;
+        this.status = setStatus(status);
+    }
+
     public int getId() {
         return id;
     }
@@ -45,6 +52,17 @@ public class Task {
         return status;
     }
 
+    public TaskStatuses setStatus(String status) {
+        switch (status) {
+            case "DONE":
+                return this.status = TaskStatuses.DONE;
+            case "IN_PROGRESS":
+                return this.status = TaskStatuses.IN_PROGRESS;
+            default:
+                return this.status = TaskStatuses.NEW;
+        }
+    }
+
     public String getDescription() {
         return description;
     }
@@ -55,7 +73,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("%s, %s, %s, %s, %s,",
+        return String.format("%s,%s,%s,%s,%s,",
                 getId(),
                 getType(),
                 getName(),

@@ -2,7 +2,7 @@ package tasktracker.tasks;
 
 public class Subtask extends Task {
     private String epicName;
-//    private int epicId;
+    private int epicId;
 
     // Конструктор для создания новой подзадачи и помещения в эпик.
     public Subtask(String name, String description, Epic epic) {
@@ -19,6 +19,12 @@ public class Subtask extends Task {
         this.epicId = epic.id;
     }
 
+    // Конструктор для сохранения сабтаски из строки.
+    public Subtask(int subtaskId, String name, String description, String status, int epicId) {
+        super(subtaskId, name, description, status);
+        this.epicId = epicId;
+    }
+
     public String getEpicName() {
         return epicName;
     }
@@ -26,19 +32,6 @@ public class Subtask extends Task {
     public int getEpicId() {
         return epicId;
     }
-
-    // 3
-//    @Override
-//    public String toString() {
-//        return "Subtask{" +
-//                "id=" + id +
-//                ", name='" + name + '\'' +
-//                ", description='" + description + '\'' +
-//                ", status='" + status + '\'' +
-//                ", epicId=" + epicId +
-//                ", epicName='" + epicName + '\'' +
-//                '}';
-//    }
 
     @Override
     public String toString() {

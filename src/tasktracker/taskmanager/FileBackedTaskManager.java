@@ -1,33 +1,71 @@
 package tasktracker.taskmanager;
 
 import tasktracker.exceptions.ManagerSaveException;
-import tasktracker.historymanager.InMemoryHistoryManager;
 import tasktracker.tasks.Epic;
 import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
-import tasktracker.tasks.TaskTypes;
+import tasktracker.tasks.TaskStatuses;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    String fileName;
+    File fileName;
 
-    public FileBackedTaskManager(String fileName) {
+    public FileBackedTaskManager(File fileName) {
         this.fileName = fileName;
     }
 
-    public void save() throws ManagerSaveException {
+    public void save() {
         try (Writer fw = new FileWriter(fileName)) {
             fw.write("id,type,name,status,description,epic\n");
             fw.write(String.format("%s", super.toString()));
             fw.write("\n");
-            fw.write(String.format("%s", super.toStringHistoryManager()));
+            fw.write(String.format("%s", super.historyToString()));
         } catch (IOException e) {
             throw new ManagerSaveException(e.getMessage());
         }
+    }
+
+    public Task fromString(String line) {
+        Task task = new Task(0, "", "", "");
+
+        // Сами линии (таски) разбиваем на элементы - id, type, name и т.д. и возвращаем определенную таску
+        String[] elem = line.split(",");
+        switch (elem[1]) {
+            case "TASK":
+                return new Task(Integer.parseInt(elem[0]), elem[2], elem[4], elem[3]);
+            case "EPIC":
+                return new Epic(Integer.parseInt(elem[0]), elem[2], elem[4]);
+            case "SUBTASK":
+                return new Subtask(Integer.parseInt(elem[0]), elem[2], elem[4], elem[3], Integer.parseInt(elem[5]));
+        }
+        return task;
+    }
+
+    public static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
+        try {
+            // Сохраняем текст из файла в переменную text
+            String text = Files.readString(file.toPath());
+            // Разбиваем текст на линии, которые представляют собой информацию о таске
+            String[] lines = text.split(System.lineSeparator());
+            for (int i = 1; i < lines.length; i++) {
+                Task task = taskManager.fromString(lines[i]);
+                taskManager.createTask(task);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e); // здесь свое или стандартное?
+        }
+        return taskManager;
     }
 
     @Override
@@ -88,17 +126,38 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public ArrayList<Task> getListAllTasks() {
-        return super.getListAllTasks();
+    public void removeTaskById(int taskId) {
+        super.removeTaskById(taskId);
+        save();
     }
 
     @Override
-    public ArrayList<Epic> getListAllEpics() {
-        return super.getListAllEpics();
+    public void removeEpicById(int epicId) {
+        super.removeEpicById(epicId);
+        save();
     }
 
     @Override
-    public ArrayList<Subtask> getListAllSubtasks() {
-        return super.getListAllSubtasks();
+    public void removeSubtaskById(int subtaskId) {
+        super.removeSubtaskById(subtaskId);
+        save();
+    }
+
+    @Override
+    public void deleteAllTasks() {
+        super.deleteAllTasks();
+        save();
+    }
+
+    @Override
+    public void deleteAllEpics() {
+        super.deleteAllEpics();
+        save();
+    }
+
+    @Override
+    public void deleteAllSubtasks() {
+        super.deleteAllSubtasks();
+        save();
     }
 }

@@ -10,36 +10,64 @@ import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
 import tasktracker.tasks.TaskStatuses;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
 
-    private static final String FILE_PATH = "src/tasktracker/taskmanager/files/tasks.csv";
+    private static final File FILE_PATH = new File("src/tasktracker/taskmanager/files/tasks.csv");
 
     public static void main(String[] args) {
 
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(FILE_PATH);
+        FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(FILE_PATH);
+        System.out.println();
 
-        Task task01 = new Task("task01", "desc for task01");
-        Epic epic01 = new Epic("epic01", "desc for epic01");
-        Task task02 = new Task("task02", "desc for task02");
-        Subtask subtask01 = new Subtask("subtask01", "desc for subtask01", epic01);
-        Task task03 = new Task("task03", "desc for task03");
-        fileBackedTaskManager.createTask(task01);
-        fileBackedTaskManager.createTask(task02);
-        fileBackedTaskManager.createTask(task03);
-        fileBackedTaskManager.createEpic(epic01);
-        fileBackedTaskManager.createSubtask(subtask01);
+//        String text = "1, TASK, task01 edited, IN_PROGRESS, edited desk,\n" +
+//                "2, TASK, task02, NEW, desc of task02,\n" +
+//                "3, TASK, task03, NEW, desc of task03,\n";
+//
+//        List<String> lines = Stream.of(text)
+//                .flatMap(t -> Arrays.stream(t.split("\n")))
+//                .collect(Collectors.toList());
+//
+//        List<String> elem = lines.stream()
+//                .flatMap(l -> Arrays.stream(l.split(", ")))
+//                .collect(Collectors.toList());
+//
+//        System.out.println(elem.size());
+//        System.out.println();
+//        elem.forEach(System.out::println);
 
-        task01 = new Task(task01.getId(), "task01 edited", "edited desk", TaskStatuses.IN_PROGRESS);
-        fileBackedTaskManager.updateTask(task01);
-
-        fileBackedTaskManager.getTaskById(task03.getId());
-        fileBackedTaskManager.getEpicById(epic01.getId());
-        fileBackedTaskManager.getTaskById(task01.getId());
-        fileBackedTaskManager.getTaskById(task02.getId());
-        fileBackedTaskManager.getSubtaskById(subtask01.getId());
+//        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(FILE_PATH);
+//
+//        Task task01 = new Task("task01", "desc for task01");
+//        Epic epic01 = new Epic("epic01", "desc for epic01");
+//        Task task02 = new Task("task02", "desc for task02");
+//        Subtask subtask01 = new Subtask("subtask01", "desc for subtask01", epic01);
+//        Task task03 = new Task("task03", "desc for task03");
+//        fileBackedTaskManager.createTask(task01);
+//        fileBackedTaskManager.createTask(task02);
+//        fileBackedTaskManager.createTask(task03);
+//        fileBackedTaskManager.createEpic(epic01);
+//        fileBackedTaskManager.createSubtask(subtask01);
+//
+//        task01 = new Task(task01.getId(), "task01 edited", "edited desk", TaskStatuses.IN_PROGRESS);
+//        fileBackedTaskManager.updateTask(task01);
+//
+//        fileBackedTaskManager.getTaskById(task03.getId());
+//        fileBackedTaskManager.getEpicById(epic01.getId());
+//        fileBackedTaskManager.getTaskById(task01.getId());
+//        fileBackedTaskManager.getTaskById(task02.getId());
+//        fileBackedTaskManager.getSubtaskById(subtask01.getId());
+//
+//        fileBackedTaskManager.removeTaskById(task03.getId());
+//        fileBackedTaskManager.deleteAllSubtasks();
 
 
 //        TaskManager taskManager = Managers.getDefault();
@@ -66,6 +94,10 @@ public class Main {
 //
 //        taskManager.createEpic(epic2);
 //
+//        taskManager.getTaskById(task1.getId());
+//        taskManager.getSubtaskById(subtask1.getId());
+//        taskManager.getEpicById(epic1.getId());
+
 //        // 2. запросите созданные задачи несколько раз в разном порядке и
 //        // 3. после каждого запроса выведите историю и убедитесь, что в ней нет повторов
 //        taskManager.getSubtaskById(subtask2.getId());
