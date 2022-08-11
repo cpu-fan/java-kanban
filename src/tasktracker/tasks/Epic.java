@@ -5,7 +5,7 @@ import java.util.HashMap;
 import static tasktracker.tasks.TaskStatuses.*;
 
 public class Epic extends Task {
-    private HashMap<Integer, Subtask> epicSubtasks;
+    private final HashMap<Integer, Subtask> epicSubtasks;
 
     // Конструктор для создания эпика.
     public Epic(String name, String description) {

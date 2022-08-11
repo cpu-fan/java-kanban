@@ -40,11 +40,11 @@ public interface TaskManager {
     void deleteAllEpics();
     void deleteAllSubtasks();
 
-    public HashMap<Integer, Task> getMapOfTasks();
+    HashMap<Integer, Task> getMapOfTasks();
 
-    public HashMap<Integer, Epic> getMapOfEpics();
+    HashMap<Integer, Epic> getMapOfEpics();
 
-    public HashMap<Integer, Subtask> getMapOfSubtasks();
+    HashMap<Integer, Subtask> getMapOfSubtasks();
 
     // Метод для получения списка всех подзадач определённого эпика.
     HashMap<Integer, Subtask> getListAllSubtasksByEpic(Epic epic);
@@ -53,5 +53,5 @@ public interface TaskManager {
     List<Task> getHistory();
 
     // Метод для сохранения истории просмотров в строку в том виде, который нужен для csv файла
-    public String historyToString();
+    String historyToString();
 }
