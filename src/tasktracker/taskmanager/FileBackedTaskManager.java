@@ -4,16 +4,13 @@ import tasktracker.exceptions.ManagerSaveException;
 import tasktracker.tasks.Epic;
 import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
-import tasktracker.tasks.TaskStatuses;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,6 +21,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.fileName = fileName;
     }
 
+    // Метод для сохранения тасок в файл
     public void save() {
         try (Writer fw = new FileWriter(fileName)) {
             fw.write("id,type,name,status,description,epic\n");
@@ -35,10 +33,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
+    // Метод для парсинга тасок из файла
     public Task fromString(String line) {
         Task task = new Task(0, "", "", "");
 
-        // Сами линии (таски) разбиваем на элементы - id, type, name и т.д. и возвращаем определенную таску
         String[] elem = line.split(",");
         switch (elem[1]) {
             case "TASK":
@@ -51,14 +49,45 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return task;
     }
 
+    // Метод для парсинга id тасок из файла
+    public static List<Integer> historyFromString(String line) {
+        return Stream.of(line.split(","))
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
+    }
+
+    // Метод для наполнения истории из файла
+    public static void fillHistory(String line, FileBackedTaskManager taskManager) {
+        for (Integer id : historyFromString(line)) {
+            if (taskManager.getMapOfTasks().containsKey(id)) {
+                taskManager.getTaskById(id);
+            } else if (taskManager.getMapOfEpics().containsKey(id)) {
+                taskManager.getEpicById(id);
+            } else {
+                taskManager.getSubtaskById(id);
+            }
+        }
+    }
+
+    // Метод для обновления счетчика id тасок после выгрузки тасок из файла
+    public static void updateCounter(FileBackedTaskManager taskManager) {
+        List<Integer> ids = new ArrayList<>(taskManager.getMapOfTasks().keySet());
+        ids.addAll(taskManager.getMapOfEpics().keySet());
+        ids.addAll(taskManager.getMapOfSubtasks().keySet());
+        Task.setCountTaskId(Collections.max(ids));
+    }
+
+    // Метод для выгрузки тасок из файла в объект менеджера
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
         try {
-            // Сохраняем текст из файла в переменную text
-            String text = Files.readString(file.toPath());
-            // Разбиваем текст на линии, которые представляют собой информацию о таске
-            String[] lines = text.split(System.lineSeparator());
+            String text = Files.readString(file.toPath()); // Сохраняем текст из файла в переменную text
+            String[] lines = text.split(System.lineSeparator()); // И разбиваем текст на линии (таски)
             for (int i = 1; i < lines.length; i++) {
+                if (lines[i].equals("")) {
+                    fillHistory(lines[i + 1], taskManager); // наполняем историю
+                    break;
+                }
                 switch (lines[i].split(",")[1]) {
                     case "TASK":
                         Task task = taskManager.fromString(lines[i]);
@@ -73,12 +102,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         taskManager.createSubtask((Subtask) subtask);
                 }
             }
+            updateCounter(taskManager); // обновляем счетчик для идентификаторов тасок
         } catch (IOException e) {
-            throw new RuntimeException(e); // здесь свое или стандартное?
+            throw new ManagerSaveException(e.getMessage());
         }
         return taskManager;
     }
 
+    // Ниже группа переопределённых методов класса родителя с добавлением метода сохранения тасок в файл
     @Override
     public void createTask(Task task) {
         super.createTask(task);

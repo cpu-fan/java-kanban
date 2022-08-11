@@ -40,6 +40,12 @@ public interface TaskManager {
     void deleteAllEpics();
     void deleteAllSubtasks();
 
+    public HashMap<Integer, Task> getMapOfTasks();
+
+    public HashMap<Integer, Epic> getMapOfEpics();
+
+    public HashMap<Integer, Subtask> getMapOfSubtasks();
+
     // Метод для получения списка всех подзадач определённого эпика.
     HashMap<Integer, Subtask> getListAllSubtasksByEpic(Epic epic);
 

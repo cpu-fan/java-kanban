@@ -84,6 +84,19 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(mapOfSubtasks.values());
     }
 
+    // Геттеры для мап тасок всех типов
+    public HashMap<Integer, Task> getMapOfTasks() {
+        return mapOfTasks;
+    }
+
+    public HashMap<Integer, Epic> getMapOfEpics() {
+        return mapOfEpics;
+    }
+
+    public HashMap<Integer, Subtask> getMapOfSubtasks() {
+        return mapOfSubtasks;
+    }
+
     // Методы для обновления задач соответствующей коллекции
     @Override
     public void updateTask(Task task) {

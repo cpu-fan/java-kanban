@@ -23,7 +23,7 @@ public class Task {
         this.status = status;
     }
 
-    // Конструктор для создания задачи (и эпика?) из строки.
+    // Конструктор для создания задачи из строки.
     public Task(int id, String name, String description, String status) {
         this(name, description);
         this.id = id;
@@ -69,6 +69,10 @@ public class Task {
 
     public int getEpicId() {
         return epicId;
+    }
+
+    public static void setCountTaskId(int countTaskId) {
+        Task.countTaskId = countTaskId;
     }
 
     @Override

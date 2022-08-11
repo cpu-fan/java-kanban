@@ -33,6 +33,7 @@ public class Subtask extends Task {
         return epicId;
     }
 
+    // Унаследованный toString от класса Task с добавлением в конец id эпика, в котором содержится эта сабтаска
     @Override
     public String toString() {
         return super.toString() + getEpicId();
