@@ -4,6 +4,7 @@ import tasktracker.taskmanager.FileBackedTaskManager;
 import tasktracker.tasks.Epic;
 import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
+import tasktracker.tasks.TaskStatuses;
 
 import java.io.File;
 
@@ -22,6 +23,8 @@ public class Main {
         Task task02 = new Task("task02", "desc for task02");
         Subtask subtask01 = new Subtask("subtask01", "desc for subtask01", epic01);
         Task task03 = new Task("task03", "desc for task03");
+        subtask01 = new Subtask(subtask01.getId(), "updated subtask01", "desc for updated subtask01",
+                TaskStatuses.DONE, epic01);
         fileBackedTaskManager.createTask(task01);
         fileBackedTaskManager.createTask(task02);
         fileBackedTaskManager.createTask(task03);

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    File fileName;
+    private File fileName;
 
     public FileBackedTaskManager(File fileName) {
         this.fileName = fileName;
@@ -29,7 +29,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             fw.write("\n");
             fw.write(String.format("%s", super.historyToString()));
         } catch (IOException e) {
-            throw new ManagerSaveException(e.getMessage());
+            throw new ManagerSaveException("Что-то пошло не так.");
         }
     }
 
@@ -104,7 +104,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
             updateCounter(taskManager); // обновляем счетчик для идентификаторов тасок
         } catch (IOException e) {
-            throw new ManagerSaveException(e.getMessage());
+            throw new ManagerSaveException("Что-то пошло не так.");
         }
         return taskManager;
     }

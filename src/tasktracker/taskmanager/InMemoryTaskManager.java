@@ -85,15 +85,15 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     // Геттеры для мап тасок всех типов
-    public HashMap<Integer, Task> getMapOfTasks() {
+    protected HashMap<Integer, Task> getMapOfTasks() {
         return mapOfTasks;
     }
 
-    public HashMap<Integer, Epic> getMapOfEpics() {
+    protected HashMap<Integer, Epic> getMapOfEpics() {
         return mapOfEpics;
     }
 
-    public HashMap<Integer, Subtask> getMapOfSubtasks() {
+    protected HashMap<Integer, Subtask> getMapOfSubtasks() {
         return mapOfSubtasks;
     }
 
@@ -214,8 +214,6 @@ public class InMemoryTaskManager implements TaskManager {
         return history.getHistory();
     }
 
-    /* "Напишите метод сохранения задачи в строку String toString(Task task) или переопределите базовый."
-        (я остановился на втором варианте - переопределил базовый). */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -231,11 +229,6 @@ public class InMemoryTaskManager implements TaskManager {
         return sb.toString();
     }
 
-    /* "Напишите статические методы static String historyToString(HistoryManager manager) и
-        static List<Integer> historyFromString(String value) для сохранения и восстановления менеджера истории из CSV."
-        (реализовал метод перевода истории в строку здесь, рядом с toString менеджера InMemoryTaskManager, поэтому
-        он не статический и без параметра, как предложено в подсказке). */
-    @Override
     public String historyToString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < getHistory().size(); i++) {
