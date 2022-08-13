@@ -20,6 +20,12 @@ public class Epic extends Task {
         this.id = id;
     }
 
+    // Конструктор для создания эпика из строки.
+    public Epic(int id, String name, String description, TaskStatuses status) {
+        this(id, name, description);
+        this.status = status;
+    }
+
     public void calculateEpicStatus() {
         // Считаем количество подзадач со статусом NEW и DONE.
         int countNew = 0;

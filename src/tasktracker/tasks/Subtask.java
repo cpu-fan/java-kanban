@@ -20,7 +20,7 @@ public class Subtask extends Task {
     }
 
     // Конструктор для сохранения сабтаски из строки.
-    public Subtask(int subtaskId, String name, String description, String status, int epicId) {
+    public Subtask(int subtaskId, String name, String description, TaskStatuses status, int epicId) {
         super(subtaskId, name, description, status);
         this.epicId = epicId;
     }

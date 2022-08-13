@@ -1,9 +1,7 @@
 package tasktracker.taskmanager;
 
 import tasktracker.exceptions.ManagerSaveException;
-import tasktracker.tasks.Epic;
-import tasktracker.tasks.Subtask;
-import tasktracker.tasks.Task;
+import tasktracker.tasks.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -35,18 +33,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     // Метод для парсинга тасок из файла
     public Task fromString(String line) {
-        Task task = new Task(0, "", "", "");
+        Task task = new Task(0, "", "", TaskStatuses.NEW);
 
         String[] elem = line.split(",");
-        switch (elem[1]) {
-            case "TASK":
-                return new Task(Integer.parseInt(elem[0]), elem[2], elem[4], elem[3]);
-            case "EPIC":
-                return new Epic(Integer.parseInt(elem[0]), elem[2], elem[4]);
-            case "SUBTASK":
-                return new Subtask(Integer.parseInt(elem[0]), elem[2], elem[4], elem[3], Integer.parseInt(elem[5]));
+        final int id = Integer.parseInt(elem[0]);
+        final TaskTypes type = TaskTypes.valueOf(elem[1]);
+        final String name = elem[2];
+        final TaskStatuses status = TaskStatuses.valueOf(elem[3]);
+        final String description = elem[4];
+
+        switch (type) {
+            case TASK:
+                return new Task(id, name, description, status);
+            case EPIC:
+                return new Epic(id, name, description, status);
+            case SUBTASK:
+                // Здесь для epicId оставил как было, без говорящего названия, т.к. возникает
+                // ArrayIndexOutOfBoundsException при считывании TASK и EPIC, потому что у них нет такой
+                // колонки. А когда настает очередь SUBTASK все ок, т.к. у него 5 элемент имеется.
+                return new Subtask(id, name, description, status, Integer.parseInt(elem[5]));
         }
-        return task;
+        return null;
     }
 
     // Метод для парсинга id тасок из файла

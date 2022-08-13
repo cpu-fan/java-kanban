@@ -16,7 +16,7 @@ public class Task {
         this.status = TaskStatuses.NEW; // все новые задачи создаются по умолчанию со статусом NEW
     }
 
-    // Конструктор для обновления задач без счетчика и с обновлением статуса.
+    // Конструктор для обновления задач (с 8-го спринта и для создания из файла) без счетчика и с обновлением статуса.
     public Task(int id, String name, String description, TaskStatuses status) {
         this(name, description);
         this.id = id;
@@ -24,11 +24,11 @@ public class Task {
     }
 
     // Конструктор для создания задачи из строки.
-    public Task(int id, String name, String description, String status) {
-        this(name, description);
-        this.id = id;
-        this.status = setStatus(status);
-    }
+//    public Task(int id, String name, String description, String status) {
+//        this(name, description);
+//        this.id = id;
+//        this.status = setStatus(status);
+//    }
 
     public int getId() {
         return id;
@@ -52,16 +52,16 @@ public class Task {
         return status;
     }
 
-    public TaskStatuses setStatus(String status) {
-        switch (status) {
-            case "DONE":
-                return this.status = TaskStatuses.DONE;
-            case "IN_PROGRESS":
-                return this.status = TaskStatuses.IN_PROGRESS;
-            default:
-                return this.status = TaskStatuses.NEW;
-        }
-    }
+//    public TaskStatuses setStatus(String status) {
+//        switch (status) {
+//            case "DONE":
+//                return this.status = TaskStatuses.DONE;
+//            case "IN_PROGRESS":
+//                return this.status = TaskStatuses.IN_PROGRESS;
+//            default:
+//                return this.status = TaskStatuses.NEW;
+//        }
+//    }
 
     public String getDescription() {
         return description;
