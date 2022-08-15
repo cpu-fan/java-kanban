@@ -45,8 +45,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     // Метод для парсинга тасок из файла
     public Task fromString(String line) {
-        Task task = new Task(0, "", "", TaskStatuses.NEW);
-
         String[] elem = line.split(",");
         final int id = Integer.parseInt(elem[0]);
         final TaskTypes type = TaskTypes.valueOf(elem[1]);
@@ -60,12 +58,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             case EPIC:
                 return new Epic(id, name, description, status);
             case SUBTASK:
-                // Здесь для epicId оставил как было, без говорящего названия, т.к. возникает
-                // ArrayIndexOutOfBoundsException при считывании TASK и EPIC, потому что у них нет такой
-                // колонки. А когда настает очередь SUBTASK все ок, т.к. у него 5 элемент имеется.
+                /* Здесь для epicId оставил как было, без говорящего названия, т.к. возникает ArrayIndexOutOfBoundsException
+                при считывании TASK и EPIC, потому что у них нет такой колонки. А когда настает очередь SUBTASK все ок,
+                т.к. у него 5 элемент имеется. */
                 return new Subtask(id, name, description, status, Integer.parseInt(elem[5]));
         }
-        return null;
+        throw new ManagerSaveException("Не удалось прочитать таску типа " + type);
     }
 
     // Метод для парсинга id тасок из файла

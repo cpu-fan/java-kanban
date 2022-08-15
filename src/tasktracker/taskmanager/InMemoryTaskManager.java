@@ -228,16 +228,4 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return sb.toString();
     }
-
-//    public String historyToString() {
-//        StringBuilder sb = new StringBuilder();
-//        for (int i = 0; i < getHistory().size(); i++) {
-//            if (i == getHistory().size() - 1) {
-//                sb.append(getHistory().get(i).getId());
-//                continue;
-//            }
-//            sb.append(getHistory().get(i).getId() + ",");
-//        }
-//        return sb.toString();
-//    }
 }
