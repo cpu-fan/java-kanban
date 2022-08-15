@@ -25,10 +25,22 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             fw.write("id,type,name,status,description,epic\n");
             fw.write(String.format("%s", super.toString()));
             fw.write("\n");
-            fw.write(String.format("%s", super.historyToString()));
+            fw.write(String.format("%s", historyToString()));
         } catch (IOException e) {
             throw new ManagerSaveException("Что-то пошло не так.");
         }
+    }
+
+    public String historyToString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < getHistory().size(); i++) {
+            if (i == getHistory().size() - 1) {
+                sb.append(getHistory().get(i).getId());
+                continue;
+            }
+            sb.append(getHistory().get(i).getId() + ",");
+        }
+        return sb.toString();
     }
 
     // Метод для парсинга тасок из файла
@@ -63,27 +75,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 .collect(Collectors.toList());
     }
 
-    // Метод для наполнения истории из файла
-    public static void fillHistory(String line, FileBackedTaskManager taskManager) {
-        for (Integer id : historyFromString(line)) {
-            if (taskManager.getMapOfTasks().containsKey(id)) {
-                taskManager.getTaskById(id);
-            } else if (taskManager.getMapOfEpics().containsKey(id)) {
-                taskManager.getEpicById(id);
-            } else {
-                taskManager.getSubtaskById(id);
-            }
-        }
-    }
-
-    // Метод для обновления счетчика id тасок после выгрузки тасок из файла
-    public static void updateCounter(FileBackedTaskManager taskManager) {
-        List<Integer> ids = new ArrayList<>(taskManager.getMapOfTasks().keySet());
-        ids.addAll(taskManager.getMapOfEpics().keySet());
-        ids.addAll(taskManager.getMapOfSubtasks().keySet());
-        Task.setCountTaskId(Collections.max(ids));
-    }
-
     // Метод для выгрузки тасок из файла в объект менеджера
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
@@ -114,6 +105,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new ManagerSaveException("Что-то пошло не так.");
         }
         return taskManager;
+    }
+
+    // Метод для наполнения истории из файла
+    public static void fillHistory(String line, FileBackedTaskManager taskManager) {
+        for (Integer id : historyFromString(line)) {
+            if (taskManager.getMapOfTasks().containsKey(id)) {
+                taskManager.getTaskById(id);
+            } else if (taskManager.getMapOfEpics().containsKey(id)) {
+                taskManager.getEpicById(id);
+            } else {
+                taskManager.getSubtaskById(id);
+            }
+        }
+    }
+
+    // Метод для обновления счетчика id тасок после выгрузки тасок из файла
+    public static void updateCounter(FileBackedTaskManager taskManager) {
+        List<Integer> ids = new ArrayList<>(taskManager.getMapOfTasks().keySet());
+        ids.addAll(taskManager.getMapOfEpics().keySet());
+        ids.addAll(taskManager.getMapOfSubtasks().keySet());
+        Task.setCountTaskId(Collections.max(ids));
     }
 
     // Ниже группа переопределённых методов класса родителя с добавлением метода сохранения тасок в файл
