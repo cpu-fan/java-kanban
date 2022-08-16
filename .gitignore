@@ -63,3 +63,6 @@ gen
 
 # Command to remove directory .idea
 # git rm --cached -r .idea
+
+# Исключения
+!lib/*.jar
