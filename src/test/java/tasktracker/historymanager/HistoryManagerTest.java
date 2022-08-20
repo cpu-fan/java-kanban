@@ -22,7 +22,7 @@ class HistoryManagerTest {
     @BeforeEach
     void setUp() {
         history = Managers.getDefaultHistory();
-        task = new Task("task name", "task desc");
+//        task = new Task("task name", "task desc");
         epic = new Epic("epic name", "epic desc");
         subtask = new Subtask("subtask name", "subtask desc", epic);
     }

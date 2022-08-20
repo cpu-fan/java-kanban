@@ -1,5 +1,10 @@
 package tasktracker.tasks;
 
+import tasktracker.exceptions.ManagerSaveException;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class Task {
     protected int id;
     protected String name;
@@ -7,6 +12,18 @@ public class Task {
     protected TaskStatuses status;
     protected int epicId;
     protected static int countTaskId;
+    protected int duration;
+    protected LocalDateTime startTime;
+
+    // Новый конструктор, который возможно придет на замену старому ниже
+    public Task(String name, String description, String startTime, int duration) {
+        id = ++countTaskId;
+        this.name = name;
+        this.description = description;
+        this.startTime = setStartTime(startTime);
+        this.duration = duration;
+        this.status = TaskStatuses.NEW; // все новые задачи создаются по умолчанию со статусом NEW
+    }
 
     // Конструктор для новых задач со счетчиком для id.
     public Task(String name, String description) {
@@ -22,13 +39,6 @@ public class Task {
         this.id = id;
         this.status = status;
     }
-
-    // Конструктор для создания задачи из строки.
-//    public Task(int id, String name, String description, String status) {
-//        this(name, description);
-//        this.id = id;
-//        this.status = setStatus(status);
-//    }
 
     public int getId() {
         return id;
@@ -52,17 +62,6 @@ public class Task {
         return status;
     }
 
-//    public TaskStatuses setStatus(String status) {
-//        switch (status) {
-//            case "DONE":
-//                return this.status = TaskStatuses.DONE;
-//            case "IN_PROGRESS":
-//                return this.status = TaskStatuses.IN_PROGRESS;
-//            default:
-//                return this.status = TaskStatuses.NEW;
-//        }
-//    }
-
     public String getDescription() {
         return description;
     }
@@ -73,6 +72,19 @@ public class Task {
 
     public static void setCountTaskId(int countTaskId) {
         Task.countTaskId = countTaskId;
+    }
+
+    private LocalDateTime setStartTime(String startTimeStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        LocalDateTime startTimeLDT = LocalDateTime.parse(startTimeStr, formatter);
+        if (startTimeLDT.isBefore(LocalDateTime.now())) {
+            throw new ManagerSaveException("Время начала выполнения задачи не должно быть раньше текущего времени");
+        }
+        return startTimeLDT;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plusMinutes(duration);
     }
 
     @Override
