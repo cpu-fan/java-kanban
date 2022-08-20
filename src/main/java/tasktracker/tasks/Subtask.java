@@ -4,6 +4,16 @@ public class Subtask extends Task {
     private String epicName;
     private final int epicId;
 
+    // Новый конструктор, который возможно придет на замену старому ниже
+    public Subtask(String name, String description, Epic epic, String startTime, int duration) {
+        super(name, description);
+        this.epicName = epic.name;
+        this.epicId = epic.id;
+        epic.addSubtask(this);
+        this.startTime = setStartTime(startTime);
+        this.duration = duration;
+    }
+
     // Конструктор для создания новой подзадачи и помещения в эпик.
     public Subtask(String name, String description, Epic epic) {
         super(name, description);

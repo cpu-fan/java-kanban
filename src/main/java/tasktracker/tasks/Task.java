@@ -12,8 +12,8 @@ public class Task {
     protected TaskStatuses status;
     protected int epicId;
     protected static int countTaskId;
-    protected int duration;
     protected LocalDateTime startTime;
+    protected long duration;
 
     // Новый конструктор, который возможно придет на замену старому ниже
     public Task(String name, String description, String startTime, int duration) {
@@ -66,6 +66,14 @@ public class Task {
         return description;
     }
 
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plusMinutes(duration);
+    }
+
     public int getEpicId() {
         return epicId;
     }
@@ -74,7 +82,7 @@ public class Task {
         Task.countTaskId = countTaskId;
     }
 
-    private LocalDateTime setStartTime(String startTimeStr) {
+    protected LocalDateTime setStartTime(String startTimeStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime startTimeLDT = LocalDateTime.parse(startTimeStr, formatter);
         if (startTimeLDT.isBefore(LocalDateTime.now())) {
@@ -83,17 +91,15 @@ public class Task {
         return startTimeLDT;
     }
 
-    public LocalDateTime getEndTime() {
-        return startTime.plusMinutes(duration);
-    }
-
     @Override
     public String toString() {
-        return String.format("%s,%s,%s,%s,%s,",
+        return String.format("%s,%s,%s,%s,%s,%s,%s,",
                 getId(),
                 getType(),
                 getName(),
                 getStatus(),
-                getDescription());
+                getDescription(),
+                getStartTime().toString(),
+                getEndTime().toString());
     }
 }

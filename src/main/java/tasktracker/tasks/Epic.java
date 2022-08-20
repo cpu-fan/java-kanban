@@ -1,11 +1,16 @@
 package tasktracker.tasks;
 
+import java.time.LocalDateTime;
+import java.time.chrono.Chronology;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.HashMap;
 
 import static tasktracker.tasks.TaskStatuses.*;
 
 public class Epic extends Task {
     private final HashMap<Integer, Subtask> epicSubtasks;
+    private LocalDateTime endTime;
 
     // Конструктор для создания эпика.
     public Epic(String name, String description) {
@@ -26,11 +31,30 @@ public class Epic extends Task {
         this.status = status;
     }
 
-    public void calculateEpicStatus() {
+    public void addSubtask(Subtask subtask) {
+        epicSubtasks.put(subtask.id, subtask);
+        calculateEpicStatus();
+    }
+
+    public void deleteSubtask(int subtaskId) {
+        epicSubtasks.remove(subtaskId);
+        calculateEpicStatus();
+    }
+
+    public void clearSubtask() {
+        epicSubtasks.clear();
+        calculateEpicStatus();
+    }
+
+    public HashMap<Integer, Subtask> getEpicSubtasks() {
+        return epicSubtasks;
+    }
+
+    private void calculateEpicStatus() {
         // Считаем количество подзадач со статусом NEW и DONE.
         int countNew = 0;
         int countDone = 0;
-        if (epicSubtasks != null) {
+        if (!epicSubtasks.isEmpty()) {
             for (Subtask subtask : epicSubtasks.values()) {
                 switch (subtask.status) {
                     case NEW:
@@ -53,23 +77,12 @@ public class Epic extends Task {
         }
     }
 
-    public void addSubtask(Subtask subtask) {
-        epicSubtasks.put(subtask.id, subtask);
-        calculateEpicStatus();
-    }
-
-    public void deleteSubtask(int subtaskId) {
-        epicSubtasks.remove(subtaskId);
-        calculateEpicStatus();
-    }
-
-    public void clearSubtask() {
-        epicSubtasks.clear();
-        calculateEpicStatus();
-    }
-
-    public HashMap<Integer, Subtask> getEpicSubtasks() {
-        return epicSubtasks;
+    public void calculateEpicDuration() {
+        int minSubtaskId = Collections.min(epicSubtasks.keySet());
+        int maxSubtaskId = Collections.max(epicSubtasks.keySet());
+        this.startTime = epicSubtasks.get(minSubtaskId).startTime;
+        this.endTime = epicSubtasks.get(maxSubtaskId).getEndTime();
+        this.duration = ChronoUnit.MINUTES.between(startTime, endTime);
     }
 
     @Override
