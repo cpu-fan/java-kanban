@@ -1,10 +1,15 @@
 package tasktracker.taskmanager;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TaskManagerTest<T extends TaskManager> {
+
+    @BeforeEach
+    void setUp() {
+    }
 
     @Test
     void createTask() {
