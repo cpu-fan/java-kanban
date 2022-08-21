@@ -1,11 +1,13 @@
 package tasktracker.taskmanager;
 
+import tasktracker.exceptions.ManagerSaveException;
 import tasktracker.historymanager.HistoryManager;
 import tasktracker.managers.Managers;
 import tasktracker.tasks.Epic;
 import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -18,20 +20,41 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> mapOfEpics = new HashMap<>();
     private final HashMap<Integer, Subtask> mapOfSubtasks = new HashMap<>();
 
+    private final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
+    }
+
+    @Override
+    public void taskTimeValidation(Task task) {
+        if (prioritizedTasks.contains(task)) {
+            System.out.println("Задача не будет добавлена, т.к. уже существует задача " +
+                    "с аналогичным временем начала выполнения.");
+        }
+    }
+
     // Методы для помещения созданной задачи в коллекцию своего типа
     @Override
     public void createTask(Task task) {
         mapOfTasks.put(task.getId(), task);
+        taskTimeValidation(task);
+        prioritizedTasks.add(task);
     }
 
     @Override
     public void createEpic(Epic epic) {
         mapOfEpics.put(epic.getId(), epic);
+        taskTimeValidation(epic);
+        prioritizedTasks.add(epic);
     }
 
     @Override
     public void createSubtask(Subtask subtask) {
         mapOfSubtasks.put(subtask.getId(), subtask);
+        taskTimeValidation(subtask);
+        prioritizedTasks.add(subtask);
     }
 
     // Методы для получения задачи по ее идентификатору из соответствующей коллекции

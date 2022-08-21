@@ -4,9 +4,8 @@ import tasktracker.tasks.Epic;
 import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public interface TaskManager {
 
@@ -45,4 +44,8 @@ public interface TaskManager {
 
     // Метод для возврата списка истории просмотра задач
     List<Task> getHistory();
+
+    List<Task> getPrioritizedTasks();
+
+    void taskTimeValidation(Task task);
 }
