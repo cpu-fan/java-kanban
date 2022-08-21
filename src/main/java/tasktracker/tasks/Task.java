@@ -10,7 +10,6 @@ public class Task {
     protected String name;
     protected String description;
     protected TaskStatuses status;
-//    protected int epicId;
     protected static int countTaskId;
     protected LocalDateTime startTime;
     protected long duration;
@@ -73,11 +72,6 @@ public class Task {
     public LocalDateTime getEndTime() {
         return startTime.plusMinutes(duration);
     }
-
-    // Нужен ли этот геттер, уже не помню (если что удалить)
-//    public int getEpicId() {
-//        return epicId;
-//    }
 
     public static void setCountTaskId(int countTaskId) {
         Task.countTaskId = countTaskId;
