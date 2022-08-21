@@ -9,9 +9,9 @@ public class Subtask extends Task {
         super(name, description);
         this.epicName = epic.name;
         this.epicId = epic.id;
-        epic.addSubtask(this);
         this.startTime = setStartTime(startTime);
         this.duration = duration;
+        epic.addSubtask(this);
     }
 
     // Конструктор для создания новой подзадачи и помещения в эпик.

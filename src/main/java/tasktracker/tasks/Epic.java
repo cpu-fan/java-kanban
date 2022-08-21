@@ -17,6 +17,7 @@ public class Epic extends Task {
         super(name, description);
         epicSubtasks = new HashMap<>();
         calculateEpicStatus();
+        calculateEpicDuration();
     }
 
     // Конструктор для обновления эпика.
@@ -34,16 +35,19 @@ public class Epic extends Task {
     public void addSubtask(Subtask subtask) {
         epicSubtasks.put(subtask.id, subtask);
         calculateEpicStatus();
+        calculateEpicDuration();
     }
 
     public void deleteSubtask(int subtaskId) {
         epicSubtasks.remove(subtaskId);
         calculateEpicStatus();
+        calculateEpicDuration();
     }
 
     public void clearSubtask() {
         epicSubtasks.clear();
         calculateEpicStatus();
+        calculateEpicDuration();
     }
 
     public HashMap<Integer, Subtask> getEpicSubtasks() {
@@ -77,12 +81,14 @@ public class Epic extends Task {
         }
     }
 
-    public void calculateEpicDuration() {
-        int minSubtaskId = Collections.min(epicSubtasks.keySet());
-        int maxSubtaskId = Collections.max(epicSubtasks.keySet());
-        this.startTime = epicSubtasks.get(minSubtaskId).startTime;
-        this.endTime = epicSubtasks.get(maxSubtaskId).getEndTime();
-        this.duration = ChronoUnit.MINUTES.between(startTime, endTime);
+    private void calculateEpicDuration() {
+        if (!epicSubtasks.isEmpty()) {
+            int minSubtaskId = Collections.min(epicSubtasks.keySet());
+            int maxSubtaskId = Collections.max(epicSubtasks.keySet());
+            this.startTime = epicSubtasks.get(minSubtaskId).startTime;
+            this.endTime = epicSubtasks.get(maxSubtaskId).getEndTime();
+            this.duration = ChronoUnit.MINUTES.between(startTime, endTime);
+        }
     }
 
     @Override
