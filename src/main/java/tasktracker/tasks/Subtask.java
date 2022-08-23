@@ -35,6 +35,14 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
+    // Конструктор для сохранения сабтаски из строки.
+    public Subtask(int subtaskId, String name, String description, TaskStatuses status, int epicId,
+                   String startTime, int duration) {
+        this(subtaskId, name, description, status, epicId);
+        this.startTime = setStartTime(startTime);
+        this.duration = duration;
+    }
+
     public String getEpicName() {
         return epicName;
     }

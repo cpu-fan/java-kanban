@@ -32,6 +32,13 @@ public class Epic extends Task {
         this.status = status;
     }
 
+    // Конструктор для создания эпика из строки с временем.
+    public Epic(int id, String name, String description, TaskStatuses status, String startTime, int duration) {
+        this(id, name, description, status);
+        this.startTime = setStartTime(startTime);
+        this.duration = duration;
+    }
+
     public void addSubtask(Subtask subtask) {
         epicSubtasks.put(subtask.id, subtask);
         calculateEpicStatus();

@@ -8,6 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,7 +25,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     // Метод для сохранения тасок в файл
     public void save() {
         try (Writer fw = new FileWriter(fileName)) {
-            fw.write("id,type,name,status,description,epic\n");
+            fw.write("id,type,name,status,description,startTime,duration,endTime,epic\n");
             fw.write(String.format("%s", super.toString()));
             fw.write("\n");
             fw.write(String.format("%s", historyToString()));
@@ -51,17 +54,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         final String name = elem[2];
         final TaskStatuses status = TaskStatuses.valueOf(elem[3]);
         final String description = elem[4];
+        final String startTime = elem[5];
+        final int duration = Integer.parseInt(elem[6]);
 
         switch (type) {
             case TASK:
-                return new Task(id, name, description, status);
+                return new Task(id, name, description, status, startTime, duration);
             case EPIC:
-                return new Epic(id, name, description, status);
+                return new Epic(id, name, description, status, startTime, duration);
             case SUBTASK:
                 /* Здесь для epicId оставил как было, без говорящего названия, т.к. возникает ArrayIndexOutOfBoundsException
                 при считывании TASK и EPIC, потому что у них нет такой колонки. А когда настает очередь SUBTASK все ок,
                 т.к. у него 5 элемент имеется. */
-                return new Subtask(id, name, description, status, Integer.parseInt(elem[5]));
+                return new Subtask(id, name, description, status, Integer.parseInt(elem[8]), startTime, duration);
         }
         throw new ManagerSaveException("Не удалось прочитать таску типа " + type);
     }

@@ -1,6 +1,7 @@
 package tasktracker.taskmanager;
 
 import tasktracker.exceptions.ManagerSaveException;
+import tasktracker.exceptions.TaskTimeValidationException;
 import tasktracker.historymanager.HistoryManager;
 import tasktracker.managers.Managers;
 import tasktracker.tasks.Epic;
@@ -9,29 +10,35 @@ import tasktracker.tasks.Task;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class InMemoryTaskManager implements TaskManager {
-
-    // Хранение истории просмотра задач
-    private final HistoryManager history = Managers.getDefaultHistory();
 
     // Хранение каждого типа задачи в отдельной коллекции
     private final HashMap<Integer, Task> mapOfTasks = new HashMap<>();
     private final HashMap<Integer, Epic> mapOfEpics = new HashMap<>();
     private final HashMap<Integer, Subtask> mapOfSubtasks = new HashMap<>();
 
-    private final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+    // Хранение истории просмотра задач
+    private final HistoryManager history = Managers.getDefaultHistory();
+
+    // Приоритизированный список задач
+    private final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime,
+            Comparator.nullsLast(Comparator.naturalOrder())));
 
     @Override
-    public List<Task> getPrioritizedTasks() {
-        return new ArrayList<>(prioritizedTasks);
+    public Set<Task> getPrioritizedTasks() {
+        return prioritizedTasks;
     }
 
     @Override
     public void taskTimeValidation(Task task) {
-        if (prioritizedTasks.contains(task)) {
-            System.out.println("Задача не будет добавлена, т.к. уже существует задача " +
-                    "с аналогичным временем начала выполнения.");
+        if (task.getStartTime() == null) {
+            prioritizedTasks.add(task);
+        } else if (prioritizedTasks.contains(task)) {
+            System.out.printf("Задача \"ID %d: %s\", не будет добавлена, т.к. уже существует задача " +
+                    "с аналогичным временем начала выполнения.\n", task.getId(), task.getName());
         }
     }
 
@@ -46,8 +53,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void createEpic(Epic epic) {
         mapOfEpics.put(epic.getId(), epic);
-        taskTimeValidation(epic);
-        prioritizedTasks.add(epic);
     }
 
     @Override
@@ -124,6 +129,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         mapOfTasks.put(task.getId(), task);
+        prioritizedTasks.remove(task);
+        prioritizedTasks.add(task);
     }
 
     @Override
@@ -140,6 +147,8 @@ public class InMemoryTaskManager implements TaskManager {
         }
         mapOfEpics.get(subtask.getEpicId()).addSubtask(subtask); // обновляем подзадачу в ее эпике и пересчитываем статус
         mapOfSubtasks.put(subtask.getId(), subtask);
+        prioritizedTasks.remove(subtask);
+        prioritizedTasks.add(subtask);
     }
 
     // Методы для удаления задачи по идентификатору соответствующей коллекции
@@ -147,6 +156,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeTaskById(int taskId) {
         if (mapOfTasks.containsKey(taskId)) {
             history.remove(taskId); // удаляем задачу из истории
+            prioritizedTasks.remove(mapOfTasks.get(taskId));
             mapOfTasks.remove(taskId); // удаляем саму задачу
         } else {
             System.out.println("Задачи с таким идентификатором не существует!");
@@ -169,6 +179,7 @@ public class InMemoryTaskManager implements TaskManager {
 
             for (Integer subtaskId : subtaskIds) {
                 history.remove(subtaskId); // удаляем подзадачи из истории
+                prioritizedTasks.remove(mapOfSubtasks.get(subtaskId));
                 mapOfSubtasks.remove(subtaskId); // проходимся по списку подзадач и удаляем собранные id на строке 107
             }
             /* Примечание: эти приседания с дополнительным списком ArrayList<Integer> subtaskIds для id подзадач
@@ -184,6 +195,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (mapOfSubtasks.containsKey(subtaskId)) {
             int epicId = mapOfSubtasks.get(subtaskId).getEpicId(); // получаем id эпика, в котором содержится подзадача
             mapOfEpics.get(epicId).deleteSubtask(subtaskId); // удаляем эту подзадачу в ее эпике и пересчитываем статус эпика
+            prioritizedTasks.remove(mapOfSubtasks.get(subtaskId));
             mapOfSubtasks.remove(subtaskId); // удаляем саму подзадачу
             history.remove(subtaskId); // удаляем подзадачу из истории
         } else {
@@ -197,6 +209,7 @@ public class InMemoryTaskManager implements TaskManager {
         // удаляем все таски из истории
         for (Integer taskId : mapOfTasks.keySet()) {
             history.remove(taskId);
+            prioritizedTasks.remove(mapOfTasks.get(taskId));
         }
         mapOfTasks.clear();
     }
@@ -207,6 +220,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Subtask subtask : mapOfSubtasks.values()) {
             history.remove(subtask.getEpicId());
             history.remove(subtask.getId());
+            prioritizedTasks.remove(subtask);
         }
         mapOfEpics.clear();
         mapOfSubtasks.clear();
@@ -217,6 +231,7 @@ public class InMemoryTaskManager implements TaskManager {
         // удаляем все сабтаски из истории
         for (Integer subtaskId : mapOfSubtasks.keySet()) {
             history.remove(subtaskId);
+            prioritizedTasks.remove(mapOfTasks.get(subtaskId));
         }
         mapOfSubtasks.clear(); // очищаем сам список сабтасок
         // также очищаем подзадачи в эпиках

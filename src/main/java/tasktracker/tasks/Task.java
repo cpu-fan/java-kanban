@@ -1,6 +1,6 @@
 package tasktracker.tasks;
 
-import tasktracker.exceptions.ManagerSaveException;
+import tasktracker.exceptions.TaskTimeValidationException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -13,8 +13,9 @@ public class Task {
     protected static int countTaskId;
     protected LocalDateTime startTime;
     protected long duration;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
-    // Новый конструктор, который возможно придет на замену старому ниже
+    // Конструктор с возможностью указать время старта и длительность задачи
     public Task(String name, String description, String startTime, int duration) {
         id = ++countTaskId;
         this.name = name;
@@ -32,11 +33,18 @@ public class Task {
         this.status = TaskStatuses.NEW; // все новые задачи создаются по умолчанию со статусом NEW
     }
 
-    // Конструктор для обновления задач (с 8-го спринта и для создания из файла) без счетчика и с обновлением статуса.
+    // Конструктор для обновления задач (с 6-го спринта и для создания из файла) без счетчика и с обновлением статуса.
     public Task(int id, String name, String description, TaskStatuses status) {
         this(name, description);
         this.id = id;
         this.status = status;
+    }
+
+    // Конструктор для обновления задач (с 7-го спринта с добавлением времени) без счетчика и с обновлением статуса.
+    public Task(int id, String name, String description, TaskStatuses status, String startTime, int duration) {
+        this(id, name, description, status);
+        this.startTime = setStartTime(startTime);
+        this.duration = duration;
     }
 
     public int getId() {
@@ -66,11 +74,25 @@ public class Task {
     }
 
     public LocalDateTime getStartTime() {
-        return startTime;
+        return this.startTime == null ? null : startTime;
     }
 
     public LocalDateTime getEndTime() {
-        return startTime.plusMinutes(duration);
+        return this.startTime == null ? null : startTime.plusMinutes(duration);
+    }
+
+    // Следующие два метода используются для обратного формирования времени в строку для хранения
+    // в toString() и последующего использования этого формата для записи в файл и чтения из него
+    public String getStartTimeInFormat() {
+        return this.startTime == null ? null : this.startTime.format(FORMATTER);
+    }
+
+    public String getEndTimeInFormat() {
+        return this.startTime == null ? null : startTime.plusMinutes(duration).format(FORMATTER);
+    }
+
+    public long getDuration() {
+        return this.duration;
     }
 
     public static void setCountTaskId(int countTaskId) {
@@ -78,23 +100,29 @@ public class Task {
     }
 
     protected LocalDateTime setStartTime(String startTimeStr) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        LocalDateTime startTimeLDT = LocalDateTime.parse(startTimeStr, formatter);
+        /* Данная проверка сделана, т.к. этот метод используется еще и при чтении из файла, где есть
+        таски без времени у которых значение заполнено как null */
+        if (startTimeStr.equals("null")) {
+            return null;
+        }
+        LocalDateTime startTimeLDT = LocalDateTime.parse(startTimeStr, FORMATTER);
         if (startTimeLDT.isBefore(LocalDateTime.now())) {
-            throw new ManagerSaveException("Время начала выполнения задачи не должно быть раньше текущего времени");
+            throw new TaskTimeValidationException("Время начала выполнения задачи не должно " +
+                    "быть раньше текущего времени");
         }
         return startTimeLDT;
     }
 
     @Override
     public String toString() {
-        return String.format("%s,%s,%s,%s,%s,%s,%s,",
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,",
                 getId(),
                 getType(),
                 getName(),
                 getStatus(),
                 getDescription(),
-                getStartTime(),
-                getEndTime());
+                getStartTimeInFormat(),
+                getDuration(),
+                getEndTimeInFormat());
     }
 }

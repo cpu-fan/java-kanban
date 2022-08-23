@@ -45,7 +45,7 @@ public interface TaskManager {
     // Метод для возврата списка истории просмотра задач
     List<Task> getHistory();
 
-    List<Task> getPrioritizedTasks();
+    Set<Task> getPrioritizedTasks();
 
     void taskTimeValidation(Task task);
 }
