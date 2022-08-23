@@ -22,17 +22,18 @@ class HistoryManagerTest {
     @BeforeEach
     void setUp() {
         history = Managers.getDefaultHistory();
-//        task = new Task("task name", "task desc");
+        task = new Task("task name", "task desc");
         epic = new Epic("epic name", "epic desc");
-        subtask = new Subtask("subtask name", "subtask desc", epic);
+        subtask = new Subtask("subtask name", "subtask desc", epic, "23.08.2022 16:00", 60);
+//        subtask = new Subtask("subtask name", "subtask desc", epic);
     }
 
     @Test
     void addToHistory() {
         history.addToHistory(task);
         final List<Task> historyList = history.getHistory();
-        assertNotNull(historyList, "История не пустая.");
-        assertEquals(1, historyList.size(), "В истории хранится 1 задача.");
+        assertNotNull(historyList,"История пустая.");
+        assertEquals(1, historyList.size(), "В истории должна хранится 1 задача.");
     }
 
     @Test
@@ -47,8 +48,8 @@ class HistoryManagerTest {
         history.addToHistory(task);
         history.addToHistory(task);
         final List<Task> historyList = history.getHistory();
-        assertNotNull(historyList, "История не пустая.");
-        assertEquals(1, historyList.size(), "В истории хранится 1 задача.");
+        assertNotNull(historyList, "История пустая.");
+        assertEquals(1, historyList.size(), "В истории должна хранится 1 задача.");
     }
 
     @Test
@@ -58,15 +59,15 @@ class HistoryManagerTest {
         history.addToHistory(subtask);
 
         List<Task> historyList = history.getHistory();
-        assertNotNull(historyList, "История не пустая.");
-        assertEquals(3, historyList.size(), "В истории хранятся 3 задачи.");
+        assertNotNull(historyList, "История пустая.");
+        assertEquals(3, historyList.size(), "В истории должно хранятся 3 задачи.");
 
         history.remove(task.getId());
         historyList = history.getHistory();
         assertNotNull(historyList, "История не пустая.");
-        assertEquals(2, historyList.size(), "В истории после удаления осталось 2 задачи.");
-        assertEquals(epic, historyList.get(0), "В истории остался эпик.");
-        assertEquals(subtask, historyList.get(1), "В истории осталась сабтаска.");
+        assertEquals(2, historyList.size(), "В истории после удаления должно остаться 2 задачи.");
+        assertEquals(epic, historyList.get(0), "В истории должен остаться эпик.");
+        assertEquals(subtask, historyList.get(1), "В истории должна остаться сабтаска.");
     }
 
     @Test
@@ -76,15 +77,15 @@ class HistoryManagerTest {
         history.addToHistory(subtask);
 
         List<Task> historyList = history.getHistory();
-        assertNotNull(historyList, "История не пустая.");
-        assertEquals(3, historyList.size(), "В истории хранятся 3 задачи.");
+        assertNotNull(historyList, "История пустая.");
+        assertEquals(3, historyList.size(), "В истории должно хранятся 3 задачи.");
 
         history.remove(epic.getId());
         historyList = history.getHistory();
-        assertNotNull(historyList, "История не пустая.");
-        assertEquals(2, historyList.size(), "В истории после удаления осталось 2 задачи.");
-        assertEquals(task, historyList.get(0), "В истории осталась таска.");
-        assertEquals(subtask, historyList.get(1), "В истории осталась сабтаска.");
+        assertNotNull(historyList, "История пустая.");
+        assertEquals(2, historyList.size(), "В истории после удаления должно остаться 2 задачи.");
+        assertEquals(task, historyList.get(0), "В истории должна остаться таска.");
+        assertEquals(subtask, historyList.get(1), "В истории должна остаться сабтаска.");
     }
 
     @Test
@@ -94,14 +95,14 @@ class HistoryManagerTest {
         history.addToHistory(subtask);
 
         List<Task> historyList = history.getHistory();
-        assertNotNull(historyList, "История не пустая.");
-        assertEquals(3, historyList.size(), "В истории хранятся 3 задачи.");
+        assertNotNull(historyList, "История пустая.");
+        assertEquals(3, historyList.size(), "В истории должно хранятся 3 задачи.");
 
         history.remove(subtask.getId());
         historyList = history.getHistory();
-        assertNotNull(historyList, "История не пустая.");
-        assertEquals(2, historyList.size(), "В истории после удаления осталось 2 задачи.");
-        assertEquals(task, historyList.get(0), "В истории осталась таска.");
-        assertEquals(epic, historyList.get(1), "В истории остался эпик.");
+        assertNotNull(historyList, "История пустая.");
+        assertEquals(2, historyList.size(), "В истории после удаления должно остаться 2 задачи.");
+        assertEquals(task, historyList.get(0), "В истории должна остаться таска.");
+        assertEquals(epic, historyList.get(1), "В истории должен остаться эпик.");
     }
 }

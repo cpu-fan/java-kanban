@@ -3,8 +3,7 @@ package tasktracker.tasks;
 import java.time.LocalDateTime;
 import java.time.chrono.Chronology;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 import static tasktracker.tasks.TaskStatuses.*;
 
@@ -90,11 +89,30 @@ public class Epic extends Task {
 
     private void calculateEpicDuration() {
         if (!epicSubtasks.isEmpty()) {
-            int minSubtaskId = Collections.min(epicSubtasks.keySet());
-            int maxSubtaskId = Collections.max(epicSubtasks.keySet());
-            this.startTime = epicSubtasks.get(minSubtaskId).startTime;
-            this.endTime = epicSubtasks.get(maxSubtaskId).getEndTime();
-            this.duration = ChronoUnit.MINUTES.between(startTime, endTime);
+            List<Subtask> subtasksWithStartTime = new ArrayList<>();
+            for (Subtask subtask : epicSubtasks.values()) {
+                if (subtask.getStartTime() != null) {
+                    subtasksWithStartTime.add(subtask);
+                }
+            }
+
+            LocalDateTime epicStartTime = LocalDateTime.MAX;
+            LocalDateTime epicEndTime = LocalDateTime.MIN;
+            long epicDuration = 0;
+
+            for (Subtask subtask : subtasksWithStartTime) {
+                if (subtask.getStartTime().isBefore(epicStartTime)) {
+                    epicStartTime = subtask.getStartTime();
+                }
+                if (subtask.getEndTime().isBefore(epicEndTime)) {
+                    epicEndTime = subtask.getEndTime();
+                }
+                epicDuration += subtask.duration;
+            }
+
+            this.startTime = epicStartTime;
+            this.endTime = epicEndTime;
+            this.duration = epicDuration;
         }
     }
 

@@ -25,7 +25,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Приоритизированный список задач
     private final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime,
-            Comparator.nullsLast(Comparator.naturalOrder())));
+            Comparator.nullsLast(Comparator.naturalOrder())).thenComparingInt(Task::getId));
 
     @Override
     public Set<Task> getPrioritizedTasks() {
