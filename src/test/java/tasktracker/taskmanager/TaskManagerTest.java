@@ -10,13 +10,7 @@ import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
 import tasktracker.tasks.TaskStatuses;
 
-import java.io.BufferedReader;
-import java.io.Console;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Executable;
-import java.util.Arrays;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
