@@ -1,17 +1,13 @@
 package tasktracker.taskmanager;
 
-import tasktracker.exceptions.ManagerSaveException;
-import tasktracker.exceptions.TaskTimeValidationException;
+import tasktracker.exceptions.NonExistentTaskException;
 import tasktracker.historymanager.HistoryManager;
 import tasktracker.managers.Managers;
 import tasktracker.tasks.Epic;
 import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -128,27 +124,39 @@ public class InMemoryTaskManager implements TaskManager {
     // Методы для обновления задач соответствующей коллекции
     @Override
     public void updateTask(Task task) {
-        mapOfTasks.put(task.getId(), task);
-        prioritizedTasks.remove(task);
-        prioritizedTasks.add(task);
+        try {
+            prioritizedTasks.add(task);
+            mapOfTasks.put(task.getId(), task);
+            prioritizedTasks.remove(task);
+        } catch (NullPointerException e) {
+            throw new NonExistentTaskException("Задачи с таким идентификатором не существует");
+        }
     }
 
     @Override
     public void updateEpic(Epic epic) {
-        mapOfEpics.put(epic.getId(), epic);
+        try {
+            mapOfEpics.put(epic.getId(), epic);
+        } catch (NullPointerException e) {
+            throw new NonExistentTaskException("Эпика с таким идентификатором не существует");
+        }
     }
 
     @Override
     public void updateSubtask(Subtask subtask) {
-        int oldEpicId = mapOfSubtasks.get(subtask.getId()).getEpicId(); // получаем и сохраняем старый эпик
-        boolean isNewEpic = subtask.getEpicId() != oldEpicId; // проверка на новый эпик
-        if (isNewEpic) {
-            mapOfEpics.get(oldEpicId).deleteSubtask(subtask.getId()); // удаление подзадачи из старого эпика
+        try {
+            int oldEpicId = mapOfSubtasks.get(subtask.getId()).getEpicId(); // получаем и сохраняем старый эпик
+            boolean isNewEpic = subtask.getEpicId() != oldEpicId; // проверка на новый эпик
+            if (isNewEpic) {
+                mapOfEpics.get(oldEpicId).deleteSubtask(subtask.getId()); // удаление подзадачи из старого эпика
+            }
+            mapOfEpics.get(subtask.getEpicId()).addSubtask(subtask); // обновляем подзадачу в ее эпике и пересчитываем статус
+            mapOfSubtasks.put(subtask.getId(), subtask);
+            prioritizedTasks.remove(subtask);
+            prioritizedTasks.add(subtask);
+        } catch (NullPointerException e) {
+            throw new NonExistentTaskException("Подзадачи с таким идентификатором не существует");
         }
-        mapOfEpics.get(subtask.getEpicId()).addSubtask(subtask); // обновляем подзадачу в ее эпике и пересчитываем статус
-        mapOfSubtasks.put(subtask.getId(), subtask);
-        prioritizedTasks.remove(subtask);
-        prioritizedTasks.add(subtask);
     }
 
     // Методы для удаления задачи по идентификатору соответствующей коллекции
@@ -159,7 +167,7 @@ public class InMemoryTaskManager implements TaskManager {
             prioritizedTasks.remove(mapOfTasks.get(taskId));
             mapOfTasks.remove(taskId); // удаляем саму задачу
         } else {
-            System.out.println("Задачи с таким идентификатором не существует!");
+            throw new NonExistentTaskException("Задачи с таким идентификатором не существует");
         }
     }
 
@@ -186,7 +194,7 @@ public class InMemoryTaskManager implements TaskManager {
             * удаленного эпика сделаны, чтобы избежать ошибки ConcurrentModificationException, которая возникает когда
             * я сразу пытаюсь использовать на 107 строке конструкцию mapOfSubtasks.remove(value.getId()); */
         } else {
-            System.out.println("Эпика с таким идентификатором не существует!");
+            throw new NonExistentTaskException("Эпика с таким идентификатором не существует");
         }
     }
 
@@ -199,7 +207,7 @@ public class InMemoryTaskManager implements TaskManager {
             mapOfSubtasks.remove(subtaskId); // удаляем саму подзадачу
             history.remove(subtaskId); // удаляем подзадачу из истории
         } else {
-            System.out.println("Подзадачи с таким идентификатором не существует!");
+            throw new NonExistentTaskException("Эпика с таким идентификатором не существует");
         }
     }
 
@@ -231,7 +239,7 @@ public class InMemoryTaskManager implements TaskManager {
         // удаляем все сабтаски из истории
         for (Integer subtaskId : mapOfSubtasks.keySet()) {
             history.remove(subtaskId);
-            prioritizedTasks.remove(mapOfTasks.get(subtaskId));
+            prioritizedTasks.remove(mapOfSubtasks.get(subtaskId));
         }
         mapOfSubtasks.clear(); // очищаем сам список сабтасок
         // также очищаем подзадачи в эпиках

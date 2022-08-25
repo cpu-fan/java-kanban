@@ -104,7 +104,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
             }
             updateCounter(taskManager); // обновляем счетчик для идентификаторов тасок
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             throw new ManagerSaveException("Что-то пошло не так.");
         }
         return taskManager;

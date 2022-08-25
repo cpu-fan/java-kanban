@@ -31,10 +31,10 @@ public class Main {
         Task task2 = new Task("task2 name", "task2 desc", "24.08.2022 15:00", 30);
         Task task3 = new Task("task3 name", "task3 desc", "24.08.2022 18:00", 30);
         Epic epic1 = new Epic("epic name", "epic desc");
-        Subtask subtask5 = new Subtask("subtask5", "desc subtask5", epic1, "24.08.2022 20:00", 60);
+//        Subtask subtask5 = new Subtask("subtask5", "desc subtask5", epic1, "24.08.2022 20:00", 60);
         Subtask subtask1 = new Subtask("subtask1", "desc subtask1", epic1);
-        Subtask subtask2 = new Subtask("subtask2", "desc subtask2", epic1, "24.08.2022 19:00", 60);
-        Subtask subtask3 = new Subtask("subtask3", "desc subtask3", epic1, "24.08.2022 17:00", 60);
+//        Subtask subtask2 = new Subtask("subtask2", "desc subtask2", epic1, "24.08.2022 19:00", 60);
+//        Subtask subtask3 = new Subtask("subtask3", "desc subtask3", epic1, "24.08.2022 17:00", 60);
         Subtask subtask4 = new Subtask("subtask4", "desc subtask4", epic1);
 
         TaskManager manager = Managers.getDefaultFile();
@@ -44,10 +44,10 @@ public class Main {
         manager.createTask(task3);
         manager.createEpic(epic1);
         manager.createSubtask(subtask1);
-        manager.createSubtask(subtask2);
-        manager.createSubtask(subtask3);
+//        manager.createSubtask(subtask2);
+//        manager.createSubtask(subtask3);
         manager.createSubtask(subtask4);
-        manager.createSubtask(subtask5);
+//        manager.createSubtask(subtask5);
         // добавлены новые поля в файл и вроде даже как записываются. надо еще проверить как считываются
         FileBackedTaskManager manager2 = FileBackedTaskManager.loadFromFile(Managers.getFilePath());
     }

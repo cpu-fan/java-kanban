@@ -87,32 +87,61 @@ public class Epic extends Task {
         }
     }
 
+    // Если второй рабочий, то этот удалить
+//    private void calculateEpicDuration() {
+//        if (!epicSubtasks.isEmpty()) {
+//            List<Subtask> subtasksWithStartTime = new ArrayList<>();
+//            for (Subtask subtask : epicSubtasks.values()) {
+//                if (subtask.getStartTime() != null) {
+//                    subtasksWithStartTime.add(subtask);
+//                }
+//            }
+//
+//            LocalDateTime epicStartTime = LocalDateTime.MAX;
+//            LocalDateTime epicEndTime = LocalDateTime.MIN;
+//            long epicDuration = 0;
+//
+//            for (Subtask subtask : subtasksWithStartTime) {
+//                if (subtask.getStartTime().isBefore(epicStartTime)) {
+//                    epicStartTime = subtask.getStartTime();
+//                }
+//                if (subtask.getEndTime().isBefore(epicEndTime)) {
+//                    epicEndTime = subtask.getEndTime();
+//                }
+//                epicDuration += subtask.duration;
+//            }
+//
+//            this.startTime = epicStartTime;
+//            this.endTime = epicEndTime;
+//            this.duration = epicDuration;
+//        }
+//    }
+
     private void calculateEpicDuration() {
         if (!epicSubtasks.isEmpty()) {
-            List<Subtask> subtasksWithStartTime = new ArrayList<>();
             for (Subtask subtask : epicSubtasks.values()) {
                 if (subtask.getStartTime() != null) {
-                    subtasksWithStartTime.add(subtask);
+                    LocalDateTime epicStartTime = LocalDateTime.MAX;
+                    LocalDateTime epicEndTime = LocalDateTime.MIN;
+                    long epicDuration = 0;
+
+                    if (subtask.getStartTime().isBefore(epicStartTime)) {
+                        epicStartTime = subtask.getStartTime();
+                    }
+                    if (subtask.getEndTime().isBefore(epicEndTime)) {
+                        epicEndTime = subtask.getEndTime();
+                    }
+                    epicDuration += subtask.duration;
+
+                    this.startTime = epicStartTime;
+                    this.endTime = epicEndTime;
+                    this.duration = epicDuration;
+                } else {
+                    this.startTime = null;
+                    this.endTime = null;
+                    this.duration = 0;
                 }
             }
-
-            LocalDateTime epicStartTime = LocalDateTime.MAX;
-            LocalDateTime epicEndTime = LocalDateTime.MIN;
-            long epicDuration = 0;
-
-            for (Subtask subtask : subtasksWithStartTime) {
-                if (subtask.getStartTime().isBefore(epicStartTime)) {
-                    epicStartTime = subtask.getStartTime();
-                }
-                if (subtask.getEndTime().isBefore(epicEndTime)) {
-                    epicEndTime = subtask.getEndTime();
-                }
-                epicDuration += subtask.duration;
-            }
-
-            this.startTime = epicStartTime;
-            this.endTime = epicEndTime;
-            this.duration = epicDuration;
         }
     }
 

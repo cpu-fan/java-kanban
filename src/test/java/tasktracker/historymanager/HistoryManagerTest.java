@@ -24,8 +24,7 @@ class HistoryManagerTest {
         history = Managers.getDefaultHistory();
         task = new Task("task name", "task desc");
         epic = new Epic("epic name", "epic desc");
-        subtask = new Subtask("subtask name", "subtask desc", epic, "23.08.2022 16:00", 60);
-//        subtask = new Subtask("subtask name", "subtask desc", epic);
+        subtask = new Subtask("subtask name", "subtask desc", epic, "23.08.2023 16:00", 60);
     }
 
     @Test
