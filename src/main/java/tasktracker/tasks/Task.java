@@ -52,13 +52,7 @@ public class Task {
     }
 
     public TaskTypes getType() {
-        if (this.getClass().equals(Task.class)) {
-            return TaskTypes.TASK;
-        } else if (this.getClass().equals(Epic.class)) {
-            return TaskTypes.EPIC;
-        } else {
-            return TaskTypes.SUBTASK;
-        }
+        return TaskTypes.TASK;
     }
 
     public String getName() {
@@ -113,16 +107,19 @@ public class Task {
         return startTimeLDT;
     }
 
+    public int getCountTaskId() {
+        return countTaskId;
+    }
+
     @Override
     public String toString() {
-        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,",
+        return String.format("%s,%s,%s,%s,%s,%s,%s,",
                 getId(),
                 getType(),
                 getName(),
                 getStatus(),
                 getDescription(),
                 getStartTimeInFormat(),
-                getDuration(),
-                getEndTimeInFormat());
+                getDuration());
     }
 }

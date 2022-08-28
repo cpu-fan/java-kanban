@@ -1,5 +1,6 @@
 package tasktracker.taskmanager;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,10 +51,10 @@ class FileBackedTaskManagerTest {
         manager.getTaskById(task.getId());
         manager.getEpicById(epic.getId());
         manager.getSubtaskById(subtask.getId());
-        String expected = "id,type,name,status,description,startTime,duration,endTime,epic\n" +
-                "1,TASK,name,NEW,desc,null,0,null,\n" +
-                "2,EPIC,name,NEW,desc,null,0,null,\n" +
-                "3,SUBTASK,name,NEW,desc,null,0,null,2\n" +
+        String expected = "id,type,name,status,description,startTime,duration,epic\n" +
+                "1,TASK,name,NEW,desc,null,0,\n" +
+                "2,EPIC,name,NEW,desc,null,0,\n" +
+                "3,SUBTASK,name,NEW,desc,null,0,2\n" +
                 "\n" +
                 "1,2,3";
         String actual = Files.readString(FILE_PATH.toPath());
@@ -67,7 +68,7 @@ class FileBackedTaskManagerTest {
         manager.deleteAllEpics();
         manager.deleteAllSubtasks();
 
-        String expected = "id,type,name,status,description,startTime,duration,endTime,epic\n\n";
+        String expected = "id,type,name,status,description,startTime,duration,epic\n\n";
         String actual = Files.readString(FILE_PATH.toPath());
 
         assertEquals(expected, actual);
@@ -81,9 +82,9 @@ class FileBackedTaskManagerTest {
         manager.getSubtaskById(subtask.getId());
         manager.deleteAllSubtasks();
 
-        String expected = "id,type,name,status,description,startTime,duration,endTime,epic\n" +
-                "1,TASK,name,NEW,desc,null,0,null,\n" +
-                "2,EPIC,name,NEW,desc,null,0,null,\n" +
+        String expected = "id,type,name,status,description,startTime,duration,epic\n" +
+                "1,TASK,name,NEW,desc,null,0,\n" +
+                "2,EPIC,name,NEW,desc,null,0,\n" +
                 "\n" +
                 "1,2";
         String actual = Files.readString(FILE_PATH.toPath());
@@ -94,10 +95,10 @@ class FileBackedTaskManagerTest {
     // Пустой список истории
     @Test
     void saveWhenHistoryListIsEmpty() throws IOException {
-        String expected = "id,type,name,status,description,startTime,duration,endTime,epic\n" +
-                "1,TASK,name,NEW,desc,null,0,null,\n" +
-                "2,EPIC,name,NEW,desc,null,0,null,\n" +
-                "3,SUBTASK,name,NEW,desc,null,0,null,2\n" +
+        String expected = "id,type,name,status,description,startTime,duration,epic\n" +
+                "1,TASK,name,NEW,desc,null,0,\n" +
+                "2,EPIC,name,NEW,desc,null,0,\n" +
+                "3,SUBTASK,name,NEW,desc,null,0,2\n" +
                 "\n";
         String actual = Files.readString(FILE_PATH.toPath());
 
@@ -121,9 +122,9 @@ class FileBackedTaskManagerTest {
 
     @Test
     void loadFromFileWhenHistoryListIsEmpty() {
-        String expected = "1,TASK,name,NEW,desc,null,0,null,\n" +
-                "2,EPIC,name,NEW,desc,null,0,null,\n" +
-                "3,SUBTASK,name,NEW,desc,null,0,null,2\n";
+        String expected = "1,TASK,name,NEW,desc,null,0,\n" +
+                "2,EPIC,name,NEW,desc,null,0,\n" +
+                "3,SUBTASK,name,NEW,desc,null,0,2\n";
         TaskManager manager2 = FileBackedTaskManager.loadFromFile(FILE_PATH);
         assertEquals(expected, manager2.toString());
     }

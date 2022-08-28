@@ -1,5 +1,6 @@
 package tasktracker.taskmanager;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,11 @@ class TaskManagerTest<T extends TaskManager> {
         manager.deleteAllTasks();
         manager.deleteAllEpics();
         manager.deleteAllSubtasks();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        Task.setCountTaskId(0);
     }
 
     @Test
@@ -120,7 +126,7 @@ class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void updateTask() {
-        task = new Task("update subtask", "desc", "25.08.2022 23:59", 60);
+        task = new Task("update subtask", "desc", "25.08.2023 23:59", 60);
         manager.updateTask(task);
         assertEquals(task, manager.getTaskById(task.getId()));
     }

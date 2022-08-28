@@ -48,6 +48,4 @@ public interface TaskManager {
     List<Task> getHistory();
 
     Set<Task> getPrioritizedTasks();
-
-    void taskTimeValidation(Task task);
 }

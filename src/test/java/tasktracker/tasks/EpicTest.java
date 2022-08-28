@@ -1,5 +1,7 @@
 package tasktracker.tasks;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +18,11 @@ class EpicTest {
         epic = new Epic("epic name", "epic desc");
         subtask1 = new Subtask("subtask1", "subtask1 desc", epic);
         subtask2 = new Subtask("subtask2", "subtask2 desc", epic);
+    }
+
+    @AfterAll
+    static void afterAll() {
+        Task.setCountTaskId(0);
     }
 
     // Пустой список подзадач

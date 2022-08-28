@@ -1,6 +1,7 @@
 package tasktracker.taskmanager;
 
 import tasktracker.exceptions.NonExistentTaskException;
+import tasktracker.exceptions.TaskTimeValidationException;
 import tasktracker.historymanager.HistoryManager;
 import tasktracker.managers.Managers;
 import tasktracker.tasks.Epic;
@@ -28,21 +29,27 @@ public class InMemoryTaskManager implements TaskManager {
         return prioritizedTasks;
     }
 
-    @Override
     public void taskTimeValidation(Task task) {
-        if (task.getStartTime() == null) {
-            prioritizedTasks.add(task);
-        } else if (prioritizedTasks.contains(task)) {
-            System.out.printf("Задача \"ID %d: %s\", не будет добавлена, т.к. уже существует задача " +
-                    "с аналогичным временем начала выполнения.\n", task.getId(), task.getName());
+        for (Task prioritizedTask : prioritizedTasks) {
+            if (prioritizedTask.getStartTime() == null || task.getStartTime() == null) {
+                break;
+            }
+            if (task.getId() == prioritizedTask.getId()) {
+                continue;
+            }
+            if (!(!prioritizedTask.getEndTime().isAfter(task.getStartTime())
+                    || !task.getEndTime().isAfter(prioritizedTask.getStartTime()))) {
+                throw new TaskTimeValidationException("Задача с таким временем старта уже существует. " +
+                        "Проигнорированная задача - ", task);
+            }
         }
     }
 
     // Методы для помещения созданной задачи в коллекцию своего типа
     @Override
     public void createTask(Task task) {
+        taskTimeValidation(task); // насколько я понял, ты хотел, чтобы таска с одинаковым временем не добавлялась и в мапу?)
         mapOfTasks.put(task.getId(), task);
-        taskTimeValidation(task);
         prioritizedTasks.add(task);
     }
 
@@ -53,8 +60,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createSubtask(Subtask subtask) {
-        mapOfSubtasks.put(subtask.getId(), subtask);
         taskTimeValidation(subtask);
+        mapOfSubtasks.put(subtask.getId(), subtask);
         prioritizedTasks.add(subtask);
     }
 
@@ -125,9 +132,12 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         try {
-            prioritizedTasks.add(task);
-            mapOfTasks.put(task.getId(), task);
+            /* удаление необходимо, т.к. в TreeSet не происходит обновление как мапе через put().
+            * Тут, в TreeSet, если уже есть задача с аналогичным временем, чтобы ее обновить, необходимо сначала удалить.
+            * Возможно я что-то упускаю и не предусмотрел, поправь, пожалуйста если что меня :) */
             prioritizedTasks.remove(task);
+            mapOfTasks.put(task.getId(), task);
+            prioritizedTasks.add(task);
         } catch (NullPointerException e) {
             throw new NonExistentTaskException("Задачи с таким идентификатором не существует");
         }

@@ -1,5 +1,6 @@
 package tasktracker.tasks;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,8 +19,9 @@ class TaskTest {
         task = new Task("name", "desc", "25.08.2023 12:00", 60);
     }
 
-    @AfterEach
-    void tearDown() {
+    @AfterAll
+    static void afterAll() {
+        Task.setCountTaskId(0);
     }
 
     // Добавьте в тесты проверку новых полей.

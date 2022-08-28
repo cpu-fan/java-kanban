@@ -1,7 +1,11 @@
 package tasktracker.tasks;
 
+import tasktracker.exceptions.TaskTimeValidationException;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static tasktracker.tasks.TaskStatuses.*;
 
@@ -58,6 +62,11 @@ public class Epic extends Task {
         return epicSubtasks;
     }
 
+    @Override
+    public TaskTypes getType() {
+        return TaskTypes.EPIC;
+    }
+
     private void calculateEpicStatus() {
         // Считаем количество подзадач со статусом NEW и DONE.
         int countNew = 0;
@@ -75,7 +84,7 @@ public class Epic extends Task {
             }
 
             // В зависимости от количества задач с определенным статусом устанавливаем статус для эпика.
-            if (epicSubtasks.isEmpty() || epicSubtasks.size() == countNew) {
+            if (epicSubtasks.size() == countNew) {
                 this.status = NEW;
             } else if (epicSubtasks.size() == countDone) {
                 this.status = DONE;
@@ -86,30 +95,39 @@ public class Epic extends Task {
     }
 
     private void calculateEpicDuration() {
-        if (!epicSubtasks.isEmpty()) {
+        if (!epicSubtasks.isEmpty() && epicSubtasks.size() > 1) {
+            LocalDateTime epicStartTime = LocalDateTime.MAX;
+            LocalDateTime epicEndTime = LocalDateTime.MIN;
+            long epicDuration = 0;
+
             for (Subtask subtask : epicSubtasks.values()) {
                 if (subtask.getStartTime() != null) {
-                    LocalDateTime epicStartTime = LocalDateTime.MAX;
-                    LocalDateTime epicEndTime = LocalDateTime.MIN;
-                    long epicDuration = 0;
-
                     if (subtask.getStartTime().isBefore(epicStartTime)) {
                         epicStartTime = subtask.getStartTime();
                     }
-                    if (subtask.getEndTime().isBefore(epicEndTime)) {
+                    if (subtask.getEndTime().isAfter(epicEndTime)) {
                         epicEndTime = subtask.getEndTime();
                     }
                     epicDuration += subtask.duration;
-
-                    this.startTime = epicStartTime;
-                    this.endTime = epicEndTime;
-                    this.duration = epicDuration;
-                } else {
-                    this.startTime = null;
-                    this.endTime = null;
-                    this.duration = 0;
                 }
             }
+
+            this.startTime = epicStartTime;
+            this.endTime = epicEndTime;
+            this.duration = epicDuration;
+
+        } else if (epicSubtasks.size() == 1) {
+            int subtaskId = 0;
+            for (Integer id : epicSubtasks.keySet()) {
+                subtaskId = id;
+            }
+            this.startTime = epicSubtasks.get(subtaskId).getStartTime();
+            this.endTime = epicSubtasks.get(subtaskId).getEndTime();
+            this.duration = epicSubtasks.get(subtaskId).getDuration();
+        } else {
+            this.startTime = null;
+            this.endTime = null;
+            this.duration = 0;
         }
     }
 

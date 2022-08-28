@@ -24,7 +24,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     // Метод для сохранения тасок в файл
     public void save() {
         try (Writer fw = new FileWriter(fileName)) {
-            fw.write("id,type,name,status,description,startTime,duration,endTime,epic\n");
+            fw.write("id,type,name,status,description,startTime,duration,epic\n");
             fw.write(String.format("%s", super.toString()));
             fw.write("\n");
             fw.write(String.format("%s", historyToString()));
@@ -35,7 +35,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public String historyToString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < getHistory().size(); i++) {
+        int historySize = getHistory().size();
+        for (int i = 0; i < historySize; i++) {
             if (i == getHistory().size() - 1) {
                 sb.append(getHistory().get(i).getId());
                 continue;
@@ -65,7 +66,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 /* Здесь для epicId оставил как было, без говорящего названия, т.к. возникает ArrayIndexOutOfBoundsException
                 при считывании TASK и EPIC, потому что у них нет такой колонки. А когда настает очередь SUBTASK все ок,
                 т.к. у него 5 элемент имеется. */
-                return new Subtask(id, name, description, status, Integer.parseInt(elem[8]), startTime, duration);
+                return new Subtask(id, name, description, status, Integer.parseInt(elem[7]), startTime, duration);
         }
         throw new ManagerSaveException("Не удалось прочитать таску типа " + type);
     }

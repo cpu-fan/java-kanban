@@ -51,6 +51,11 @@ public class Subtask extends Task {
         return epicId;
     }
 
+    @Override
+    public TaskTypes getType() {
+        return TaskTypes.SUBTASK;
+    }
+
     // Унаследованный toString от класса Task с добавлением в конец id эпика, в котором содержится эта сабтаска
     @Override
     public String toString() {
