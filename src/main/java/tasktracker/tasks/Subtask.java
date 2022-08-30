@@ -4,7 +4,16 @@ public class Subtask extends Task {
     private String epicName;
     private final int epicId;
 
-    // Новый конструктор, который возможно придет на замену старому ниже
+    public Subtask(int subtaskId, String name, String description, TaskStatuses status, Epic epic,
+                   String startTime, int duration) {
+        super(subtaskId, name, description, status);
+        this.epicName = epic.name;
+        this.epicId = epic.id;
+        this.startTime = setStartTime(startTime);
+        this.duration = duration;
+        epic.addSubtask(this);
+    }
+
     public Subtask(String name, String description, Epic epic, String startTime, int duration) {
         super(name, description);
         this.epicName = epic.name;

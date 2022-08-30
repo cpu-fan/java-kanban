@@ -1,15 +1,15 @@
 package tasktracker.tasks;
 
-import tasktracker.exceptions.TaskTimeValidationException;
-
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 import static tasktracker.tasks.TaskStatuses.*;
 
 public class Epic extends Task {
+    /* в этом классе возможно все таки надо было переопределить getDuration, а не getEndTime? Я его переопределил
+       и вроде все ок стало :) По крайней мере то, что ты описал в замечании в этом классе. */
+
     private final HashMap<Integer, Subtask> epicSubtasks;
     private LocalDateTime endTime;
 
@@ -67,6 +67,15 @@ public class Epic extends Task {
         return TaskTypes.EPIC;
     }
 
+    @Override
+    public long getDuration() {
+        if (startTime == null) {
+            return 0;
+        } else {
+            return Long.parseLong(String.valueOf(Duration.between(startTime, endTime).toMinutes()));
+        }
+    }
+
     private void calculateEpicStatus() {
         // Считаем количество подзадач со статусом NEW и DONE.
         int countNew = 0;
@@ -108,13 +117,12 @@ public class Epic extends Task {
                     if (subtask.getEndTime().isAfter(epicEndTime)) {
                         epicEndTime = subtask.getEndTime();
                     }
-                    epicDuration += subtask.duration;
                 }
             }
 
             this.startTime = epicStartTime;
             this.endTime = epicEndTime;
-            this.duration = epicDuration;
+            this.duration = getDuration();
 
         } else if (epicSubtasks.size() == 1) {
             int subtaskId = 0;
@@ -124,6 +132,7 @@ public class Epic extends Task {
             this.startTime = epicSubtasks.get(subtaskId).getStartTime();
             this.endTime = epicSubtasks.get(subtaskId).getEndTime();
             this.duration = epicSubtasks.get(subtaskId).getDuration();
+
         } else {
             this.startTime = null;
             this.endTime = null;

@@ -126,7 +126,8 @@ class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void updateTask() {
-        task = new Task("update subtask", "desc", "25.08.2023 23:59", 60);
+        task = new Task(task.getId(), "update subtask", "desc", TaskStatuses.IN_PROGRESS,
+                "25.08.2023 23:59", 60);
         manager.updateTask(task);
         assertEquals(task, manager.getTaskById(task.getId()));
     }
@@ -134,9 +135,7 @@ class TaskManagerTest<T extends TaskManager> {
     @Test
     void updateTaskWhenMapOfTasksIsEmpty() {
         manager.deleteAllTasks();
-        manager.updateTask(task);
-        assertEquals(task, manager.getTaskById(task.getId()));
-        // Апдейт на пустую мапу задач работает как обычное добавление (аналогичное действие у эпика и подзадачи)
+        assertThrows(NonExistentTaskException.class, () -> manager.updateTask(manager.getTaskById(task.getId())));
     }
 
     @Test
@@ -255,5 +254,51 @@ class TaskManagerTest<T extends TaskManager> {
         assertEquals(1, manager.getListAllSubtasks().size());
         manager.deleteAllSubtasks();
         assertEquals(0, manager.getListAllSubtasks().size());
+    }
+
+    @Test
+    void checkEpicTimeWhenAddSubtask() {
+        Subtask subtaskWithTime = new Subtask("name", "desc", epic, "12.12.2121 12:00", 60);
+        manager.createSubtask(subtaskWithTime);
+
+        String epicStartTime = manager.getEpicById(epic.getId()).getStartTimeInFormat();
+        String epicEndTime = manager.getEpicById(epic.getId()).getEndTimeInFormat();
+        long duration = manager.getEpicById(epic.getId()).getDuration();
+
+        assertEquals("12.12.2121 12:00", epicStartTime);
+        assertEquals("12.12.2121 13:00", epicEndTime);
+        assertEquals(60, duration);
+    }
+
+    @Test
+    void checkEpicTimeWhenUpdateSubtask() {
+        Subtask subtaskWithTime = new Subtask("name", "desc", epic, "12.12.2121 12:00", 60);
+        manager.createSubtask(subtaskWithTime);
+        subtaskWithTime = new Subtask(subtaskWithTime.getId(), "name", "desc", TaskStatuses.NEW, epic,
+                "12.12.2121 15:00", 120);
+        manager.updateSubtask(subtaskWithTime);
+
+        String epicStartTime = manager.getEpicById(epic.getId()).getStartTimeInFormat();
+        String epicEndTime = manager.getEpicById(epic.getId()).getEndTimeInFormat();
+        long duration = manager.getEpicById(epic.getId()).getDuration();
+
+        assertEquals("12.12.2121 15:00", epicStartTime);
+        assertEquals("12.12.2121 17:00", epicEndTime);
+        assertEquals(120, duration);
+    }
+
+    @Test
+    void checkEpicTimeWhenDeleteSubtask() {
+        Subtask subtaskWithTime = new Subtask("name", "desc", epic, "12.12.2121 12:00", 60);
+        manager.createSubtask(subtaskWithTime);
+        manager.removeSubtaskById(subtaskWithTime.getId());
+
+        String epicStartTime = manager.getEpicById(epic.getId()).getStartTimeInFormat();
+        String epicEndTime = manager.getEpicById(epic.getId()).getEndTimeInFormat();
+        long duration = manager.getEpicById(epic.getId()).getDuration();
+
+        assertNull(epicStartTime);
+        assertNull(epicEndTime);
+        assertEquals(0, duration);
     }
 }

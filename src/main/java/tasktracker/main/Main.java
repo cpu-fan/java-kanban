@@ -13,53 +13,26 @@ import java.time.LocalDateTime;
 public class Main {
 
     public static void main(String[] args) {
-//        Epic epic = new Epic("name", "desc");
-//        Subtask subtask3 = new Subtask("name", "desc", epic, "01.12.2022 03:00", 60);
-//        Subtask subtask2 = new Subtask("name", "desc", epic, "01.12.2022 02:00", 60);
-//        Subtask subtask8 = new Subtask("name", "desc", epic, "01.12.2022 08:00", 60);
-//        Subtask subtask4 = new Subtask("name", "desc", epic, "01.12.2022 04:00", 60);
-//        Subtask subtask1 = new Subtask("name", "desc", epic, "01.12.2022 01:00", 60);
-//        Subtask subtask9 = new Subtask("name", "desc", epic, "01.12.2022 09:00", 60);
-//        Subtask subtask5 = new Subtask("name", "desc", epic, "01.12.2022 05:00", 60);
-//        Subtask subtask6 = new Subtask("name", "desc", epic, "01.12.2022 06:00", 60);
-//        Subtask subtask7 = new Subtask("name", "desc", epic, "01.12.2022 07:00", 60);
-//        Subtask subtask10 = new Subtask("name", "desc", epic);
+        // 1. Проверка исправления по замечанию в классе Epic
+        Epic epic = new Epic("epic", "desc");
+        Subtask subtask1 = new Subtask("subtask1", "desc", epic, "11.11.2900 11:00", 60);
+        Subtask subtask2 = new Subtask("subtask2", "desc", epic, "11.11.3000 11:00", 60);
+
+        TaskManager manager = Managers.getDefault();
+
+        manager.createEpic(epic);
+        manager.createSubtask(subtask1);
+        manager.createSubtask(subtask2);
+
+        // 2. Проверка по исправлению в классе InMemoryTaskManager, строка 40
+//        Task task1 = new Task("task1", "task1", "12.12.2121 12:00", 60);
+//        Task task2 = new Task("task2", "task2", "12.12.2121 12:00", 60);
 //
 //        TaskManager manager = Managers.getDefault();
-//        manager.createEpic(epic);
-//        manager.createSubtask(subtask1);
-//        manager.createSubtask(subtask2);
-//        manager.createSubtask(subtask3);
-//        manager.createSubtask(subtask4);
-//        manager.createSubtask(subtask5);
-//        manager.createSubtask(subtask6);
-//        manager.createSubtask(subtask7);
-//        manager.createSubtask(subtask8);
-//        manager.createSubtask(subtask9);
-//        manager.createSubtask(subtask10);
-//        LocalDateTime epicEndTimeCheck = epic.getEndTime();
-
-
-        //
-//        Epic epic = new Epic("name", "desc");
-//        Subtask subtask1 = new Subtask("subtask1 name", "desc", epic, "01.12.2022 03:00", 60);
-//        Task task1 = new Task("task1", "desc", "12.12.2022 01:00", 60);
 //
-//        TaskManager manager = Managers.getDefault();
-//        manager.createEpic(epic);
-//        manager.createSubtask(subtask1);
 //        manager.createTask(task1);
-//
-//        task1 = new Task(task1.getId(), "updated task1", "desc", TaskStatuses.IN_PROGRESS,
-//                "12.12.2022 01:00", 60);
-//        manager.updateTask(task1);
+//        manager.createTask(task2);
 
-
-        //
-//        Epic epic = new Epic("name", "desc");
-//        Subtask subtask1 = new Subtask("name", "desc", epic);
-//        TaskManager manager = Managers.getDefault();
-//        manager.createEpic(epic);
-//        manager.createSubtask(subtask1);
+        // 3.
     }
 }
