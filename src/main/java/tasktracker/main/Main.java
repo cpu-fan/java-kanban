@@ -13,20 +13,20 @@ import java.time.LocalDateTime;
 public class Main {
 
     public static void main(String[] args) {
-        // 1. Проверка исправления по замечанию в классе Epic (3 ревью)
-        Epic epic = new Epic("epic", "desc");
-        Subtask subtask1 = new Subtask("subtask1", "desc", epic, "11.11.2022 00:00", 60);
-        Subtask subtask2 = new Subtask("subtask2", "desc", epic, "11.11.2022 22:00", 60);
-
         TaskManager manager = Managers.getDefault();
 
-        manager.createEpic(epic);
-        manager.createSubtask(subtask1);
-        manager.createSubtask(subtask2);
-
-        LocalDateTime egst = epic.getStartTime();
-        LocalDateTime eget = epic.getEndTime();
-        long egd = epic.getDuration();
+        // 1. Проверка исправления по замечанию в классе Epic (3 ревью)
+//        Epic epic = new Epic("epic", "desc");
+//        Subtask subtask1 = new Subtask("subtask1", "desc", epic, "11.11.2022 00:00", 60);
+//        Subtask subtask2 = new Subtask("subtask2", "desc", epic, "11.11.2022 22:00", 60);
+//
+//        manager.createEpic(epic);
+//        manager.createSubtask(subtask1);
+//        manager.createSubtask(subtask2);
+//
+//        LocalDateTime egst = epic.getStartTime();
+//        LocalDateTime eget = epic.getEndTime();
+//        long egd = epic.getDuration();
 
         // 2. Проверка, что не сломалось исправление замечания из первого ревью про 10 тасок
 //        Epic epic = new Epic("name", "desc");
@@ -40,8 +40,7 @@ public class Main {
 //        Subtask subtask6 = new Subtask("name", "desc", epic, "01.12.2022 06:00", 60);
 //        Subtask subtask7 = new Subtask("name", "desc", epic, "01.12.2022 07:00", 60);
 //        Subtask subtask10 = new Subtask("name", "desc", epic);
-//
-//        TaskManager manager = Managers.getDefault();
+
 //        manager.createEpic(epic);
 //        manager.createSubtask(subtask1);
 //        manager.createSubtask(subtask2);
@@ -54,5 +53,11 @@ public class Main {
 //        manager.createSubtask(subtask9);
 //        manager.createSubtask(subtask10);
 //        LocalDateTime epicEndTimeCheck = epic.getEndTime();
+
+        // 3.
+        Task priTask = new Task("priTask", "priTask desc", "11.11.2222 13:00", 60);
+        Task task = new Task("task", "task desc", "11.11.2222 00:00", 60);
+        manager.createTask(priTask);
+        manager.createTask(task);
     }
 }

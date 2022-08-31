@@ -76,14 +76,6 @@ public class Epic extends Task {
     public String getEndTimeInFormat() {
         return endTime == null ? null : endTime.format(Task.FORMATTER);
     }
-//    @Override
-//    public long getDuration() {
-//        if (startTime == null) {
-//            return 0;
-//        } else {
-//            return Long.parseLong(String.valueOf(Duration.between(startTime, endTime).toMinutes()));
-//        }
-//    }
 
     private void calculateEpicStatus() {
         // Считаем количество подзадач со статусом NEW и DONE.

@@ -38,7 +38,7 @@ public class InMemoryTaskManager implements TaskManager {
                 continue;
             }
             if (prioritizedTask.getEndTime().isAfter(task.getStartTime())
-                    || !task.getEndTime().isAfter(prioritizedTask.getStartTime())) {
+                    && task.getEndTime().isAfter(prioritizedTask.getStartTime())) {
                 throw new TaskTimeValidationException("Задача с таким временем старта уже существует. " +
                         "Проигнорированная задача - ", task);
             }
@@ -131,52 +131,51 @@ public class InMemoryTaskManager implements TaskManager {
     // Методы для обновления задач соответствующей коллекции
     @Override
     public void updateTask(Task task) {
-        try {
-            /* удаление необходимо, т.к. в TreeSet не происходит обновление как мапе через put().
-            * Тут, в TreeSet, если уже есть задача с аналогичным временем, чтобы ее обновить, необходимо сначала удалить.
-            * Возможно я что-то упускаю и не предусмотрел, поправь, пожалуйста если что меня :) */
-            final Task oldTask = mapOfTasks.get(task.getId());
-            if (oldTask == null) {
-                throw new NonExistentTaskException("Задачи с таким идентификатором не существует");
-            }
-            prioritizedTasks.remove(oldTask);
-            taskTimeValidation(task);
-            mapOfTasks.put(task.getId(), task);
-            prioritizedTasks.add(task);
-        } catch (NullPointerException e) {
+        if (task == null) {
+            throw new NonExistentTaskException("Подзадачи с таким идентификатором не существует");
+        }
+
+        final Task oldTask = mapOfTasks.get(task.getId());
+        if (oldTask == null) {
             throw new NonExistentTaskException("Задачи с таким идентификатором не существует");
         }
+
+        prioritizedTasks.remove(oldTask);
+        taskTimeValidation(task);
+        mapOfTasks.put(task.getId(), task);
+        prioritizedTasks.add(task);
     }
 
     @Override
     public void updateEpic(Epic epic) {
-        try {
-            mapOfEpics.put(epic.getId(), epic);
-        } catch (NullPointerException e) {
-            throw new NonExistentTaskException("Эпика с таким идентификатором не существует");
+        if (epic == null) {
+            throw new NonExistentTaskException("Подзадачи с таким идентификатором не существует");
         }
+        mapOfEpics.put(epic.getId(), epic);
     }
 
     @Override
     public void updateSubtask(Subtask subtask) {
-        try {
-            int oldEpicId = mapOfSubtasks.get(subtask.getId()).getEpicId(); // получаем и сохраняем старый эпик
-            boolean isNewEpic = subtask.getEpicId() != oldEpicId; // проверка на новый эпик
-            if (isNewEpic) {
-                mapOfEpics.get(oldEpicId).deleteSubtask(subtask.getId()); // удаление подзадачи из старого эпика
-            }
-            mapOfEpics.get(subtask.getEpicId()).addSubtask(subtask); // обновляем подзадачу в ее эпике и пересчитываем статус
-            Subtask oldSubtask = mapOfSubtasks.get(subtask.getId());
-            if (oldSubtask == null) {
-                return;
-            }
-            prioritizedTasks.remove(oldSubtask);
-            taskTimeValidation(subtask);
-            mapOfSubtasks.put(subtask.getId(), subtask);
-            prioritizedTasks.add(subtask);
-        } catch (NullPointerException e) {
+        if (subtask == null) {
             throw new NonExistentTaskException("Подзадачи с таким идентификатором не существует");
         }
+
+        int oldEpicId = mapOfSubtasks.get(subtask.getId()).getEpicId(); // получаем и сохраняем старый эпик
+        boolean isNewEpic = subtask.getEpicId() != oldEpicId; // проверка на новый эпик
+        if (isNewEpic) {
+            mapOfEpics.get(oldEpicId).deleteSubtask(subtask.getId()); // удаление подзадачи из старого эпика
+        }
+        mapOfEpics.get(subtask.getEpicId()).addSubtask(subtask); // обновляем подзадачу в ее эпике и пересчитываем статус
+
+        Subtask oldSubtask = mapOfSubtasks.get(subtask.getId());
+        if (oldSubtask == null) {
+            return;
+        }
+
+        prioritizedTasks.remove(oldSubtask);
+        taskTimeValidation(subtask);
+        mapOfSubtasks.put(subtask.getId(), subtask);
+        prioritizedTasks.add(subtask);
     }
 
     // Методы для удаления задачи по идентификатору соответствующей коллекции
