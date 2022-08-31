@@ -301,4 +301,59 @@ class TaskManagerTest<T extends TaskManager> {
         assertNull(epicEndTime);
         assertEquals(0, duration);
     }
+
+    @Test
+    void checkEpicTimeWhenBetweenSubtasksLargeTimeIntervalAndAddOneSubtask() {
+        Subtask subtask1 = new Subtask("name", "desc", epic, "11.11.2022 00:00", 60);
+        manager.createSubtask(subtask1);
+
+        assertEquals("11.11.2022 00:00", manager.getEpicById(epic.getId()).getStartTimeInFormat());
+        assertEquals("11.11.2022 01:00", manager.getEpicById(epic.getId()).getEndTimeInFormat());
+        assertEquals(60, manager.getEpicById(epic.getId()).getDuration());
+
+        Subtask subtask2 = new Subtask("name", "desc", epic, "11.11.2022 22:00", 60);
+        manager.createSubtask(subtask2);
+
+        assertEquals("11.11.2022 00:00", manager.getEpicById(epic.getId()).getStartTimeInFormat());
+        assertEquals("11.11.2022 23:00", manager.getEpicById(epic.getId()).getEndTimeInFormat());
+        assertEquals(120, manager.getEpicById(epic.getId()).getDuration());
+    }
+
+    @Test
+    void checkEpicTimeWhenBetweenSubtasksLargeTimeIntervalAndUpdateOneSubtask() {
+        Subtask subtask1 = new Subtask("name", "desc", epic, "11.11.2022 00:00", 60);
+        Subtask subtask2 = new Subtask("name", "desc", epic, "11.11.2022 22:00", 60);
+        manager.createSubtask(subtask1);
+        manager.createSubtask(subtask2);
+
+        assertEquals("11.11.2022 00:00", manager.getEpicById(epic.getId()).getStartTimeInFormat());
+        assertEquals("11.11.2022 23:00", manager.getEpicById(epic.getId()).getEndTimeInFormat());
+        assertEquals(120, manager.getEpicById(epic.getId()).getDuration());
+
+        subtask2 = new Subtask(subtask2.getId(), "name", "desc", TaskStatuses.NEW, epic,
+                "11.11.2022 22:00", 120);
+        manager.updateSubtask(subtask2);
+
+        assertEquals("11.11.2022 00:00", manager.getEpicById(epic.getId()).getStartTimeInFormat());
+        assertEquals("12.11.2022 00:00", manager.getEpicById(epic.getId()).getEndTimeInFormat());
+        assertEquals(180, manager.getEpicById(epic.getId()).getDuration());
+    }
+
+    @Test
+    void checkEpicTimeWhenBetweenSubtasksLargeTimeIntervalAndDeleteOneSubtask() {
+        Subtask subtask1 = new Subtask("name", "desc", epic, "11.11.2022 00:00", 60);
+        Subtask subtask2 = new Subtask("name", "desc", epic, "11.11.2022 22:00", 60);
+        manager.createSubtask(subtask1);
+        manager.createSubtask(subtask2);
+
+        assertEquals("11.11.2022 00:00", manager.getEpicById(epic.getId()).getStartTimeInFormat());
+        assertEquals("11.11.2022 23:00", manager.getEpicById(epic.getId()).getEndTimeInFormat());
+        assertEquals(120, manager.getEpicById(epic.getId()).getDuration());
+
+        manager.removeSubtaskById(subtask1.getId());
+
+        assertEquals("11.11.2022 22:00", manager.getEpicById(epic.getId()).getStartTimeInFormat());
+        assertEquals("11.11.2022 23:00", manager.getEpicById(epic.getId()).getEndTimeInFormat());
+        assertEquals(60, manager.getEpicById(epic.getId()).getDuration());
+    }
 }

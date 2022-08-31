@@ -68,13 +68,22 @@ public class Epic extends Task {
     }
 
     @Override
-    public long getDuration() {
-        if (startTime == null) {
-            return 0;
-        } else {
-            return Long.parseLong(String.valueOf(Duration.between(startTime, endTime).toMinutes()));
-        }
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
+
+    @Override
+    public String getEndTimeInFormat() {
+        return endTime == null ? null : endTime.format(Task.FORMATTER);
+    }
+//    @Override
+//    public long getDuration() {
+//        if (startTime == null) {
+//            return 0;
+//        } else {
+//            return Long.parseLong(String.valueOf(Duration.between(startTime, endTime).toMinutes()));
+//        }
+//    }
 
     private void calculateEpicStatus() {
         // Считаем количество подзадач со статусом NEW и DONE.
@@ -110,19 +119,19 @@ public class Epic extends Task {
             long epicDuration = 0;
 
             for (Subtask subtask : epicSubtasks.values()) {
-                if (subtask.getStartTime() != null) {
-                    if (subtask.getStartTime().isBefore(epicStartTime)) {
-                        epicStartTime = subtask.getStartTime();
-                    }
-                    if (subtask.getEndTime().isAfter(epicEndTime)) {
-                        epicEndTime = subtask.getEndTime();
-                    }
+                if (subtask.getStartTime() != null && subtask.getStartTime().isBefore(epicStartTime)) {
+                    epicStartTime = subtask.getStartTime();
                 }
+                if (subtask.getEndTime() != null && subtask.getEndTime().isAfter(epicEndTime)) {
+                    epicEndTime = subtask.getEndTime();
+                }
+                epicDuration += subtask.duration;
             }
 
             this.startTime = epicStartTime;
             this.endTime = epicEndTime;
-            this.duration = getDuration();
+//            this.duration = getDuration();
+            this.duration = epicDuration;
 
         } else if (epicSubtasks.size() == 1) {
             int subtaskId = 0;

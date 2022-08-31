@@ -13,7 +13,7 @@ public class Task {
     protected static int countTaskId;
     protected LocalDateTime startTime;
     protected long duration;
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    protected static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     // Конструктор с возможностью указать время старта и длительность задачи
     public Task(String name, String description, String startTime, int duration) {
