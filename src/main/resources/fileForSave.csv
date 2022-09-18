@@ -1,3 +1,9 @@
 id,type,name,status,description,startTime,duration,epic
 1,TASK,task1,NEW,desc,null,0,
+2,TASK,task2,NEW,desc,null,0,
+3,EPIC,epic1,NEW,desc,31.12.+999999999 23:59,0,
+4,SUBTASK,subtask1,NEW,desc,null,0,3
+5,SUBTASK,subtask2,NEW,desc,null,0,3
+6,SUBTASK,subtask3,NEW,desc,null,0,3
 
+6,3,1,2

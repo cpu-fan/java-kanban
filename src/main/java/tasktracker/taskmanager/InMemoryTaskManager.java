@@ -9,6 +9,8 @@ import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -277,6 +279,14 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return history.getHistory();
+    }
+
+
+    @Override
+    public List<Task> getAllTasksAllTypes() {
+        return Stream.of(mapOfTasks.values(), mapOfEpics.values(), mapOfSubtasks.values())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
     @Override
