@@ -51,6 +51,11 @@ public class Task {
         return id;
     }
 
+    // Создан для задания id при создании задачи по http
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public TaskTypes getType() {
         return TaskTypes.TASK;
     }
@@ -61,6 +66,10 @@ public class Task {
 
     public TaskStatuses getStatus() {
         return status;
+    }
+
+    public void setStatus(TaskStatuses taskStatus) {
+        this.status = taskStatus;
     }
 
     public String getDescription() {
@@ -109,6 +118,10 @@ public class Task {
 
     public int getCountTaskId() {
         return countTaskId;
+    }
+
+    public static DateTimeFormatter getFormatter() {
+        return FORMATTER;
     }
 
     @Override
