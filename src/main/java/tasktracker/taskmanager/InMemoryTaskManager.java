@@ -134,7 +134,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         if (task == null) {
-            throw new NonExistentTaskException("Подзадачи с таким идентификатором не существует");
+            throw new NonExistentTaskException("Задачи с таким идентификатором не существует");
         }
 
         final Task oldTask = mapOfTasks.get(task.getId());

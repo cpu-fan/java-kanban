@@ -2,6 +2,7 @@ package tasktracker.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -14,11 +15,13 @@ import tasktracker.tasks.TaskStatuses;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class HttpTaskServer {
@@ -26,6 +29,7 @@ public class HttpTaskServer {
     private static final int PORT = 8080;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static Gson gson = new GsonBuilder()
+            .serializeNulls()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
     private static TaskManager manager = Managers.getDefaultFile();
@@ -37,7 +41,15 @@ public class HttpTaskServer {
         httpServer.start();
 
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
-        httpServer.stop(10);
+
+        // потом удалить
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("To stop the server enter \"stop\"");
+        String stopSignal = scanner.next();
+        if (stopSignal.equals("stop")) {
+            httpServer.stop(0);
+            System.out.println("Server is stopped");
+        }
     }
 
     static class HttpTaskServerHandler implements HttpHandler {
@@ -57,6 +69,10 @@ public class HttpTaskServer {
                             String[] params = query.split("&");
                             int id = getIdFromQuery(params);
                             response = gson.toJson(manager.getTaskById(id));
+                            if (response.equals("null")) {
+                                response = "Задачи с таким id не существует";
+                                rCode = 404;
+                            }
                             break;
                         }
                         response = gson.toJson(manager.getListAllTasks());
@@ -69,9 +85,14 @@ public class HttpTaskServer {
                             String[] params = query.split("&");
                             int id = getIdFromQuery(params);
                             response = gson.toJson(manager.getEpicById(id));
+                            if (response.equals("null")) {
+                                response = "Эпика с таким id не существует";
+                                rCode = 404;
+                            }
                             break;
                         }
-                        response = gson.toJson(manager.getListAllEpics());
+                        Type epicType = new TypeToken<Epic>(){}.getType();
+                        response = gson.toJson(manager.getListAllEpics(), epicType);
                         break;
                     }
 
@@ -81,32 +102,24 @@ public class HttpTaskServer {
                             String[] params = query.split("&");
                             int id = getIdFromQuery(params);
                             response = gson.toJson(manager.getSubtaskById(id));
+                            if (response.equals("null")) {
+                                response = "Подзадачи с таким id не существует";
+                                rCode = 404;
+                            }
                             break;
                         }
                         response = gson.toJson(manager.getListAllSubtasks());
                         break;
                     }
 
-                    if (Pattern.matches("^/tasks/task/\\d+$", path)) {
-                        String idStr = path.replaceFirst("/tasks/task/", "");
-                        int id  = Integer.parseInt(idStr);
-                        response = gson.toJson(manager.getTaskById(id));
-                        rCode = 200;
-                        break;
-                    }
-
-                    if (Pattern.matches("^/tasks/epic/\\d+$", path)) {
-                        String idStr = path.replaceFirst("/tasks/epic/", "");
-                        int id  = Integer.parseInt(idStr);
-                        response = gson.toJson(manager.getEpicById(id));
-                        rCode = 200;
-                        break;
-                    }
-
-                    if (Pattern.matches("^/tasks/subtask/\\d+$", path)) {
-                        String idStr = path.replaceFirst("/tasks/subtask/", "");
-                        int id  = Integer.parseInt(idStr);
-                        response = gson.toJson(manager.getSubtaskById(id));
+                    if (Pattern.matches("^/tasks/subtask/epic$", path) && query != null && query.contains("id")) {
+                        String[] params = query.split("&");
+                        int id = getIdFromQuery(params);
+                        response = gson.toJson(manager.getEpicById(id).getEpicSubtasks());
+                        if (response.equals("null")) {
+                            response = "Эпика с таким id не существует";
+                            rCode = 404;
+                        }
                         rCode = 200;
                         break;
                     }
@@ -122,19 +135,60 @@ public class HttpTaskServer {
                         rCode = 200;
                         break;
                     }
+
                 case "POST":
+                    // Добавление и обновление задач
                     if (Pattern.matches("^/tasks/task$", path)) {
                         rCode = 201;
                         String body = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
+
                         Task task = gson.fromJson(body, Task.class);
-                        task.setId(task.getCountTaskId() + 1);
-                        Task.setCountTaskId(task.getCountTaskId() + 1);
+                        // если приходит в POST запросе параметр id, то необходимо обноление таски
+                        if (query != null && query.contains("id")) {
+                            String[] params = query.split("&");
+                            int id = getIdFromQuery(params);
+                            task.setId(id);
+                            manager.updateTask(task);
+                            response = gson.toJson(manager.getTaskById(id));
+                            break;
+                        }
                         task.setStatus(TaskStatuses.NEW);
+                        Task.setCountTaskId(task.getCountTaskId() + 1);
+                        task.setId(task.getCountTaskId());
                         manager.createTask(task);
+
                         response = gson.toJson(task);
                         break;
                     }
-                    break;
+
+                    // Добавление и обновление эпиков
+                    if (Pattern.matches("^/tasks/epic$", path)) {
+                        rCode = 201;
+                        String body = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
+
+                        Epic epic = gson.fromJson(body, Epic.class);
+                        // если приходит в POST запросе параметр id, то необходимо обноление эпика
+                        if (query != null && query.contains("id")) {
+                            String[] params = query.split("&");
+                            int id = getIdFromQuery(params);
+                            epic.setId(id);
+                            manager.updateEpic(epic);
+                            response = gson.toJson(manager.getTaskById(id));
+                            if (response.equals("null")) {
+                                response = "Задачи с таким id не существует";
+                                rCode = 404;
+                            }
+                            break;
+                        }
+                        epic.setStatus(TaskStatuses.NEW);
+                        Task.setCountTaskId(epic.getCountTaskId() + 1);
+                        epic.setId(epic.getCountTaskId());
+                        manager.createEpic(epic);
+
+                        response = gson.toJson(manager.getEpicById(epic.getId()));
+//                        response = epic.toString();
+                        break;
+                    }
                 case "DELETE":
                     //
                     break;
@@ -160,20 +214,21 @@ public class HttpTaskServer {
     static {
         Task task1 = new Task("task1", "desc", "12.12.2323 12:00", 60);
         Task task2 = new Task("task2", "desc", "12.12.2323 13:00", 60);
-        Epic epic1 = new Epic("epic1", "desc");
-        Subtask subtask1 = new Subtask("subtask1", "desc", epic1, "12.12.2323 14:00", 60);
-        Subtask subtask2 = new Subtask("subtask2", "desc", epic1, "12.12.2323 15:00", 60);
-        Subtask subtask3 = new Subtask("subtask3", "desc", epic1, "12.12.2323 16:00", 60);
+//        Epic epic1 = new Epic("epic1", "desc");
+//        Subtask subtask1 = new Subtask("subtask1", "desc", epic1, "12.12.2323 14:00", 60);
+//        Subtask subtask2 = new Subtask("subtask2", "desc", epic1, "12.12.2323 15:00", 60);
+//        Subtask subtask3 = new Subtask("subtask3", "desc", epic1, "12.12.2323 16:00", 60);
+        Epic epic2 = new Epic("epic2", "desc");
         manager.createTask(task1);
         manager.createTask(task2);
-        manager.createEpic(epic1);
-        manager.createSubtask(subtask1);
-        manager.createSubtask(subtask2);
-        manager.createSubtask(subtask3);
+//        manager.createEpic(epic1);
+//        manager.createSubtask(subtask1);
+//        manager.createSubtask(subtask2);
+//        manager.createSubtask(subtask3);
+        manager.createEpic(epic2);
 
-
-        manager.getSubtaskById(subtask3.getId());
-        manager.getTaskById(task1.getId());
-        manager.getEpicById(epic1.getId());
+//        manager.getSubtaskById(subtask3.getId());
+//        manager.getTaskById(task1.getId());
+//        manager.getEpicById(epic1.getId());
     }
 }

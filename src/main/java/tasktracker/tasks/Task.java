@@ -33,14 +33,14 @@ public class Task {
         this.status = TaskStatuses.NEW; // все новые задачи создаются по умолчанию со статусом NEW
     }
 
-    // Конструктор для обновления задач (с 6-го спринта и для создания из файла) без счетчика и с обновлением статуса.
+    // Конструктор для обновления задач без счетчика и с обновлением статуса (с 6-го спринта и для создания из файла).
     public Task(int id, String name, String description, TaskStatuses status) {
         this(name, description);
         this.id = id;
         this.status = status;
     }
 
-    // Конструктор для обновления задач (с 7-го спринта с добавлением времени) без счетчика и с обновлением статуса.
+    // Конструктор для обновления задач без счетчика и с обновлением статуса (с 7-го спринта с добавлением времени).
     public Task(int id, String name, String description, TaskStatuses status, String startTime, int duration) {
         this(id, name, description, status);
         this.startTime = setStartTime(startTime);
