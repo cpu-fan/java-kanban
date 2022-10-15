@@ -21,6 +21,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -91,8 +92,7 @@ public class HttpTaskServer {
                             }
                             break;
                         }
-                        Type epicType = new TypeToken<Epic>(){}.getType();
-                        response = gson.toJson(manager.getListAllEpics(), epicType);
+                        response = gson.toJson(manager.getListAllEpics());
                         break;
                     }
 
@@ -167,7 +167,7 @@ public class HttpTaskServer {
                         String body = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
 
                         Epic epic = gson.fromJson(body, Epic.class);
-                        // если приходит в POST запросе параметр id, то необходимо обноление эпика
+                        // если приходит в POST запросе параметр id, то необходимо обновление эпика
                         if (query != null && query.contains("id")) {
                             String[] params = query.split("&");
                             int id = getIdFromQuery(params);
@@ -186,7 +186,6 @@ public class HttpTaskServer {
                         manager.createEpic(epic);
 
                         response = gson.toJson(manager.getEpicById(epic.getId()));
-//                        response = epic.toString();
                         break;
                     }
                 case "DELETE":
@@ -214,21 +213,23 @@ public class HttpTaskServer {
     static {
         Task task1 = new Task("task1", "desc", "12.12.2323 12:00", 60);
         Task task2 = new Task("task2", "desc", "12.12.2323 13:00", 60);
-//        Epic epic1 = new Epic("epic1", "desc");
-//        Subtask subtask1 = new Subtask("subtask1", "desc", epic1, "12.12.2323 14:00", 60);
-//        Subtask subtask2 = new Subtask("subtask2", "desc", epic1, "12.12.2323 15:00", 60);
-//        Subtask subtask3 = new Subtask("subtask3", "desc", epic1, "12.12.2323 16:00", 60);
+        Epic epic1 = new Epic("epic1", "desc");
+        Subtask subtask1 = new Subtask("subtask1", "desc", epic1, "12.12.2323 14:00", 60);
+        Subtask subtask2 = new Subtask("subtask2", "desc", epic1, "12.12.2323 15:00", 60);
+        Subtask subtask3 = new Subtask("subtask3", "desc", epic1, "12.12.2323 16:00", 60);
+        // Будет содержать в startTime null, т.к. не содержит подзадач, чтобы время рассчиталось:
         Epic epic2 = new Epic("epic2", "desc");
+
         manager.createTask(task1);
         manager.createTask(task2);
-//        manager.createEpic(epic1);
-//        manager.createSubtask(subtask1);
-//        manager.createSubtask(subtask2);
-//        manager.createSubtask(subtask3);
+        manager.createEpic(epic1);
+        manager.createSubtask(subtask1);
+        manager.createSubtask(subtask2);
+        manager.createSubtask(subtask3);
         manager.createEpic(epic2);
 
-//        manager.getSubtaskById(subtask3.getId());
-//        manager.getTaskById(task1.getId());
-//        manager.getEpicById(epic1.getId());
+        manager.getSubtaskById(subtask3.getId());
+        manager.getTaskById(task1.getId());
+        manager.getEpicById(epic1.getId());
     }
 }
