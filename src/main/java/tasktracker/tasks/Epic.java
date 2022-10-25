@@ -6,8 +6,6 @@ import java.util.HashMap;
 import static tasktracker.tasks.TaskStatuses.*;
 
 public class Epic extends Task {
-    /* в этом классе возможно все таки надо было переопределить getDuration, а не getEndTime? Я его переопределил
-       и вроде все ок стало :) По крайней мере то, что ты описал в замечании в этом классе. */
 
     private final HashMap<Integer, Subtask> epicSubtasks;
     private LocalDateTime endTime;
@@ -40,6 +38,9 @@ public class Epic extends Task {
     }
 
     public void addSubtask(Subtask subtask) {
+        if (subtask.getEpicName() == null) { // новая проверка в 8 ТЗ при обновлении сабтаски по http
+            subtask.setEpicName(this.name);
+        }
         epicSubtasks.put(subtask.id, subtask);
         calculateEpicStatus();
         calculateEpicDuration();
@@ -121,7 +122,6 @@ public class Epic extends Task {
 
             this.startTime = epicStartTime;
             this.endTime = epicEndTime;
-//            this.duration = getDuration();
             this.duration = epicDuration;
 
         } else if (epicSubtasks.size() == 1) {

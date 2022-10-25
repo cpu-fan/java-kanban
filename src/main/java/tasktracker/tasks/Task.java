@@ -51,7 +51,7 @@ public class Task {
         return id;
     }
 
-    // Создан для задания id при создании задачи по http
+    // Создан для задания id при обновлении задачи по http
     public void setId(int id) {
         this.id = id;
     }
@@ -64,6 +64,10 @@ public class Task {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public TaskStatuses getStatus() {
         return status;
     }
@@ -74,6 +78,10 @@ public class Task {
 
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDateTime getStartTime() {

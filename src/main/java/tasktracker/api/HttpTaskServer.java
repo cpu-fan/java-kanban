@@ -21,6 +21,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -30,8 +31,8 @@ public class HttpTaskServer {
     private static final int PORT = 8080;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static Gson gson = new GsonBuilder()
-            .serializeNulls()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .serializeNulls()
             .create();
     private static TaskManager manager = Managers.getDefaultFile();
 
@@ -47,7 +48,7 @@ public class HttpTaskServer {
         Scanner scanner = new Scanner(System.in);
         System.out.println("To stop the server enter \"stop\"");
         String stopSignal = scanner.next();
-        if (stopSignal.equals("stop")) {
+        if (stopSignal.equals("stop") || stopSignal.equals("ыещз")) {
             httpServer.stop(0);
             System.out.println("Server is stopped");
         }
@@ -115,11 +116,15 @@ public class HttpTaskServer {
                     if (Pattern.matches("^/tasks/subtask/epic$", path) && query != null && query.contains("id")) {
                         String[] params = query.split("&");
                         int id = getIdFromQuery(params);
-                        response = gson.toJson(manager.getEpicById(id).getEpicSubtasks());
-                        if (response.equals("null")) {
+                        HashMap<Integer, Subtask> temp = null;
+                        try {
+                            temp = manager.getEpicById(id).getEpicSubtasks();
+                        } catch (NullPointerException e) {
                             response = "Эпика с таким id не существует";
                             rCode = 404;
+                            break;
                         }
+                        response = gson.toJson(temp);
                         rCode = 200;
                         break;
                     }
@@ -143,7 +148,7 @@ public class HttpTaskServer {
                         String body = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
 
                         Task task = gson.fromJson(body, Task.class);
-                        // если приходит в POST запросе параметр id, то необходимо обноление таски
+                        // если приходит в POST запросе параметр id, то необходимо обновление таски
                         if (query != null && query.contains("id")) {
                             String[] params = query.split("&");
                             int id = getIdFromQuery(params);
@@ -152,9 +157,8 @@ public class HttpTaskServer {
                             response = gson.toJson(manager.getTaskById(id));
                             break;
                         }
-                        task.setStatus(TaskStatuses.NEW);
-                        Task.setCountTaskId(task.getCountTaskId() + 1);
-                        task.setId(task.getCountTaskId());
+                        task = new Task(task.getName(), task.getDescription(),
+                                task.getStartTimeInFormat(), (int) task.getDuration());
                         manager.createTask(task);
 
                         response = gson.toJson(task);
@@ -167,32 +171,118 @@ public class HttpTaskServer {
                         String body = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
 
                         Epic epic = gson.fromJson(body, Epic.class);
-                        // если приходит в POST запросе параметр id, то необходимо обновление эпика
+                        // если приходит в POST запросе параметр id, то значит необходимо обновление эпика
                         if (query != null && query.contains("id")) {
                             String[] params = query.split("&");
                             int id = getIdFromQuery(params);
-                            epic.setId(id);
-                            manager.updateEpic(epic);
-                            response = gson.toJson(manager.getTaskById(id));
+                            // У эпиков можно самим обновлять только имя и описание, т.к. остальное рассчитывается
+                            String newEpicName = epic.getName();
+                            String oldEpicName = manager.getEpicById(id).getName();
+                            String newEpicDesc = epic.getDescription();
+                            String oldEpicDesc = manager.getEpicById(id).getDescription();
+                            if (!newEpicName.equals(oldEpicName) || !newEpicDesc.equals(oldEpicDesc)) {
+                                manager.getEpicById(id).setName(newEpicName);
+                                manager.getEpicById(id).setDescription(newEpicDesc);
+                            }
+                            response = gson.toJson(manager.getEpicById(id));
+                            rCode = 200;
                             if (response.equals("null")) {
-                                response = "Задачи с таким id не существует";
+                                response = "Эпика с таким id не существует";
                                 rCode = 404;
                             }
                             break;
                         }
-                        epic.setStatus(TaskStatuses.NEW);
-                        Task.setCountTaskId(epic.getCountTaskId() + 1);
-                        epic.setId(epic.getCountTaskId());
+                        epic = new Epic(epic.getName(), epic.getDescription());
                         manager.createEpic(epic);
 
-                        response = gson.toJson(manager.getEpicById(epic.getId()));
+                        response = gson.toJson(epic);
                         break;
                     }
+
+                    // Добавление и обновление сабтасок
+                    if (Pattern.matches("^/tasks/subtask$", path)) {
+                        rCode = 201;
+                        String body = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
+
+                        Subtask subtask = gson.fromJson(body, Subtask.class);
+                        // если приходит в POST запросе параметр id, то необходимо обновление сабтаски
+                        if (query != null && query.contains("id")) {
+                            String[] params = query.split("&");
+                            int id = getIdFromQuery(params);
+                            subtask.setId(id);
+                            manager.updateSubtask(subtask);
+                            response = gson.toJson(manager.getSubtaskById(id));
+                            break;
+                        }
+                        subtask = new Subtask(subtask.getName(), subtask.getDescription(),
+                                manager.getEpicById(subtask.getEpicId()), subtask.getStartTimeInFormat(),
+                                (int) subtask.getDuration());
+                        manager.createSubtask(subtask);
+
+                        response = gson.toJson(subtask);
+                        break;
+                    }
+
                 case "DELETE":
-                    //
-                    break;
-                default:
-                    //
+                    if (Pattern.matches("^/tasks/task$", path)) {
+                        if (query != null && query.contains("id")) {
+                            String[] params = query.split("&");
+                            int id = getIdFromQuery(params);
+                            if (manager.getTaskById(id) == null) {
+                                response = "Задачи с таким id не существует";
+                                rCode = 404;
+                                break;
+                            }
+                            manager.removeTaskById(id);
+                            response = "Задача id = " + id + " удалена";
+                            rCode = 200;
+                            break;
+                        }
+                        manager.deleteAllTasks();
+                        response = "Все задачи удалены";
+                        rCode = 200;
+                        break;
+                    }
+
+                    if (Pattern.matches("^/tasks/epic$", path)) {
+                        if (query != null && query.contains("id")) {
+                            String[] params = query.split("&");
+                            int id = getIdFromQuery(params);
+                            if (manager.getEpicById(id) == null) {
+                                response = "Эпика с таким id не существует";
+                                rCode = 404;
+                                break;
+                            }
+                            manager.removeEpicById(id);
+                            response = "Эпик id = " + id + " удален";
+                            rCode = 200;
+                            break;
+                        }
+                        manager.deleteAllEpics();
+                        response = "Все эпики удалены";
+                        rCode = 200;
+                        break;
+                    }
+
+                    if (Pattern.matches("^/tasks/subtask$", path)) {
+                        if (query != null && query.contains("id")) {
+                            String[] params = query.split("&");
+                            int id = getIdFromQuery(params);
+                            if (manager.getSubtaskById(id) == null) {
+                                response = "Подзадачи с таким id не существует";
+                                rCode = 404;
+                                break;
+                            }
+                            manager.removeSubtaskById(id);
+                            response = "Подзадача id = " + id + " удалена";
+                            rCode = 200;
+                            break;
+                        }
+                        manager.deleteAllSubtasks();
+                        response = "Все подзадачи удалены";
+                        rCode = 200;
+                        break;
+                    }
             }
 
             httpExchange.sendResponseHeaders(rCode, 0);

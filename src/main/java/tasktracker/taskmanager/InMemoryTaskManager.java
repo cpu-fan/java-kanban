@@ -151,7 +151,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateEpic(Epic epic) {
         if (epic == null) {
-            throw new NonExistentTaskException("Подзадачи с таким идентификатором не существует");
+            throw new NonExistentTaskException("Эпика с таким идентификатором не существует");
         }
         mapOfEpics.put(epic.getId(), epic);
     }

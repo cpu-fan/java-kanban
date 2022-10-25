@@ -4,6 +4,7 @@ public class Subtask extends Task {
     private String epicName;
     private final int epicId;
 
+    // Конструктор для обновления подзадачи и помещения в эпик со временем.
     public Subtask(int subtaskId, String name, String description, TaskStatuses status, Epic epic,
                    String startTime, int duration) {
         super(subtaskId, name, description, status);
@@ -14,6 +15,7 @@ public class Subtask extends Task {
         epic.addSubtask(this);
     }
 
+    // Конструктор для создания новой подзадачи и помещения в эпик со временем.
     public Subtask(String name, String description, Epic epic, String startTime, int duration) {
         super(name, description);
         this.epicName = epic.name;
@@ -54,6 +56,10 @@ public class Subtask extends Task {
 
     public String getEpicName() {
         return epicName;
+    }
+
+    public void setEpicName(String epicName) {
+        this.epicName = epicName;
     }
 
     public int getEpicId() {
