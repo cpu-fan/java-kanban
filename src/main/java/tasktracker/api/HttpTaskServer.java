@@ -317,9 +317,5 @@ public class HttpTaskServer {
         manager.createSubtask(subtask2);
         manager.createSubtask(subtask3);
         manager.createEpic(epic2);
-
-        manager.getSubtaskById(subtask3.getId());
-        manager.getTaskById(task1.getId());
-        manager.getEpicById(epic1.getId());
     }
 }
