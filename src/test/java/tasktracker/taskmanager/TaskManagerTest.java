@@ -16,8 +16,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TaskManagerTest<T extends TaskManager> {
-
-    TaskManager manager = Managers.getDefault();
+    TaskManager manager = new InMemoryTaskManager();
     Task task;
     Epic epic;
     Subtask subtask;

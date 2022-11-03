@@ -50,7 +50,7 @@ public class InMemoryTaskManager implements TaskManager {
     // Методы для помещения созданной задачи в коллекцию своего типа
     @Override
     public void createTask(Task task) {
-        taskTimeValidation(task); // насколько я понял, ты хотел, чтобы таска с одинаковым временем не добавлялась и в мапу?)
+        taskTimeValidation(task);
         mapOfTasks.put(task.getId(), task);
         prioritizedTasks.add(task);
     }

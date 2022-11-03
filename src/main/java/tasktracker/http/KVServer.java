@@ -1,4 +1,4 @@
-package tasktracker.api;
+package tasktracker.http;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -38,7 +38,7 @@ public class KVServer {
 			if ("GET".equals(h.getRequestMethod())) {
 				String key = h.getRequestURI().getPath().substring("/load/".length());
 				if (key.isEmpty()) {
-					System.out.println("Key для сохранения пустой. key указывается в пути: /save/{key}");
+					System.out.println("Key для сохранения пустой. key указывается в пути: /load/{key}");
 					h.sendResponseHeaders(400, 0);
 					return;
 				}
@@ -108,10 +108,15 @@ public class KVServer {
 	}
 
 	public void start() {
-		System.out.println("Запускаем сервер на порту " + PORT);
+		System.out.println("Запускаем KVServer на порту " + PORT);
 		System.out.println("Открой в браузере http://localhost:" + PORT + "/");
 		System.out.println("API_TOKEN: " + apiToken);
 		server.start();
+	}
+
+	public void stop(int delay) {
+		System.out.println("Останавливаем KVServer на порту " + PORT + " через " + delay + " секунд");
+		server.stop(delay);
 	}
 
 	private String generateApiToken() {

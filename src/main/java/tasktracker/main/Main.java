@@ -1,28 +1,47 @@
 package tasktracker.main;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import tasktracker.api.HttpTaskServer;
-import tasktracker.api.KVServer;
-import tasktracker.api.KVTaskClient;
-import tasktracker.api.LocalDateTimeAdapter;
+import tasktracker.http.KVServer;
+import tasktracker.managers.Managers;
+import tasktracker.taskmanager.TaskManager;
+import tasktracker.tasks.Epic;
+import tasktracker.tasks.Subtask;
 import tasktracker.tasks.Task;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 public class Main {
+    public static TaskManager httpTaskManagerFrom;
+    public static TaskManager httpTaskManagerTo;
     public static void main(String[] args) throws IOException {
         new KVServer().start();
-        KVTaskClient kvTaskClient = new KVTaskClient("http://localhost:8078");
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .serializeNulls()
-                .create();
 
+        httpTaskManagerFrom = Managers.getDefault();
+        initTasks();
+
+        httpTaskManagerTo = Managers.getDefault();
+        System.out.println();
+    }
+
+    public static void initTasks() {
         Task task1 = new Task("task1", "desc", "12.12.2323 12:00", 60);
-        String value = gson.toJson(task1);
-        kvTaskClient.put("task1", value);
-        System.out.println(kvTaskClient.load("task1"));
+        Task task2 = new Task("task2", "desc", "12.12.2323 13:00", 60);
+        Epic epic1 = new Epic("epic1", "desc");
+        Subtask subtask1 = new Subtask("subtask1", "desc", epic1, "12.12.2323 14:00", 60);
+        Subtask subtask2 = new Subtask("subtask2", "desc", epic1, "12.12.2323 15:00", 60);
+        Subtask subtask3 = new Subtask("subtask3", "desc", epic1, "12.12.2323 16:00", 60);
+        Epic epic2 = new Epic("epic2", "desc");
+
+        httpTaskManagerFrom.createTask(task1);
+        httpTaskManagerFrom.createTask(task2);
+        httpTaskManagerFrom.createEpic(epic1);
+        httpTaskManagerFrom.createSubtask(subtask1);
+        httpTaskManagerFrom.createSubtask(subtask2);
+        httpTaskManagerFrom.createSubtask(subtask3);
+        httpTaskManagerFrom.createEpic(epic2);
+
+        httpTaskManagerFrom.getEpicById(epic2.getId());
+        httpTaskManagerFrom.getTaskById(task1.getId());
+        httpTaskManagerFrom.getSubtaskById(subtask2.getId());
+        httpTaskManagerFrom.getEpicById(epic1.getId());
     }
 }
