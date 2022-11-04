@@ -290,14 +290,6 @@ public class InMemoryTaskManager implements TaskManager {
         return history.getHistory();
     }
 
-
-    @Override
-    public List<Task> getAllTasksAllTypes() {
-        return Stream.of(mapOfTasks.values(), mapOfEpics.values(), mapOfSubtasks.values())
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

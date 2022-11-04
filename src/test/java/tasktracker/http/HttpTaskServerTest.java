@@ -61,9 +61,9 @@ class HttpTaskServerTest {
     }
 
     @Test
-    void shouldGetAllTasksAllTypes() {
+    void shouldGetPrioritizedTasks() {
         HttpResponse<String> response = getResponseForGETEndpoints("/tasks");
-        String expected = gson.toJson(manager.getAllTasksAllTypes());
+        String expected = gson.toJson(manager.getPrioritizedTasks());
         String actual = response.body();
         assertEquals(expected, actual);
     }
