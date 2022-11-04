@@ -8,10 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
     public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -125,10 +124,16 @@ import java.util.stream.Stream;
 
     // Метод для обновления счетчика id тасок после выгрузки тасок из файла
     public static void updateCounter(FileBackedTaskManager taskManager) {
-        List<Integer> ids = new ArrayList<>(taskManager.getMapOfTasks().keySet());
-        ids.addAll(taskManager.getMapOfEpics().keySet());
-        ids.addAll(taskManager.getMapOfSubtasks().keySet());
-        Task.setCountTaskId(Collections.max(ids));
+        int maxId = Stream.of(taskManager.getMapOfTasks(),
+                taskManager.getMapOfEpics(),
+                taskManager.getMapOfSubtasks())
+                .map(HashMap::keySet)
+                .flatMapToInt(i -> i.stream().mapToInt(v -> v))
+                .max()
+                .orElse(0);
+
+        Task.setCountTaskId(maxId);
+
     }
 
     // Ниже группа переопределённых методов класса родителя с добавлением метода сохранения тасок в файл

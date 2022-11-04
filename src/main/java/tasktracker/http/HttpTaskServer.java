@@ -48,7 +48,7 @@ public class HttpTaskServer {
         httpServer.stop(delay);
     }
 
-    static class HttpTaskServerHandler implements HttpHandler {
+    private static class HttpTaskServerHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
             String method = httpExchange.getRequestMethod();
@@ -110,10 +110,8 @@ public class HttpTaskServer {
                     if (Pattern.matches("^/tasks/subtask/epic$", path) && query != null && query.contains("id")) {
                         String[] params = query.split("&");
                         int id = getIdFromQuery(params);
-                        HashMap<Integer, Subtask> temp = null;
-                        try {
-                            temp = manager.getEpicById(id).getEpicSubtasks();
-                        } catch (NullPointerException e) {
+                        HashMap<Integer, Subtask> temp = manager.getEpicById(id).getEpicSubtasks();
+                        if (temp == null) {
                             response = "Эпика с таким id не существует";
                             rCode = 404;
                             break;
@@ -124,7 +122,7 @@ public class HttpTaskServer {
                     }
 
                     if (Pattern.matches("^/tasks$", path)) {
-                        response = gson.toJson(manager.getAllTasksAllTypes());
+                        response = gson.toJson(manager.getPrioritizedTasks());
                         rCode = 200;
                         break;
                     }
@@ -142,13 +140,10 @@ public class HttpTaskServer {
                         String body = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
 
                         Task task = gson.fromJson(body, Task.class);
-                        // если приходит в POST запросе параметр id, то необходимо обновление таски
-                        if (query != null && query.contains("id")) {
-                            String[] params = query.split("&");
-                            int id = getIdFromQuery(params);
-                            task.setId(id);
+                        // Если в POST запросе приходит задача с id != 0, значит она пришла на обновление
+                        if (task.getId() != 0) {
                             manager.updateTask(task);
-                            response = gson.toJson(manager.getTaskById(id));
+                            response = gson.toJson(manager.getTaskById(task.getId()));
                             break;
                         }
                         task = new Task(task.getName(), task.getDescription(),
@@ -165,20 +160,18 @@ public class HttpTaskServer {
                         String body = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
 
                         Epic epic = gson.fromJson(body, Epic.class);
-                        // если приходит в POST запросе параметр id, то значит необходимо обновление эпика
-                        if (query != null && query.contains("id")) {
-                            String[] params = query.split("&");
-                            int id = getIdFromQuery(params);
+                        // Если в POST запросе приходит эпик с id != 0, значит она пришла на обновление
+                        if (epic.getId() != 0) {
                             // У эпиков можно самим обновлять только имя и описание, т.к. остальное рассчитывается
                             String newEpicName = epic.getName();
-                            String oldEpicName = manager.getEpicById(id).getName();
+                            String oldEpicName = manager.getEpicById(epic.getId()).getName();
                             String newEpicDesc = epic.getDescription();
-                            String oldEpicDesc = manager.getEpicById(id).getDescription();
+                            String oldEpicDesc = manager.getEpicById(epic.getId()).getDescription();
                             if (!newEpicName.equals(oldEpicName) || !newEpicDesc.equals(oldEpicDesc)) {
-                                manager.getEpicById(id).setName(newEpicName);
-                                manager.getEpicById(id).setDescription(newEpicDesc);
+                                manager.getEpicById(epic.getId()).setName(newEpicName);
+                                manager.getEpicById(epic.getId()).setDescription(newEpicDesc);
                             }
-                            response = gson.toJson(manager.getEpicById(id));
+                            response = gson.toJson(manager.getEpicById(epic.getId()));
                             rCode = 200;
                             if (response.equals("null")) {
                                 response = "Эпика с таким id не существует";
@@ -199,13 +192,10 @@ public class HttpTaskServer {
                         String body = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
 
                         Subtask subtask = gson.fromJson(body, Subtask.class);
-                        // если приходит в POST запросе параметр id, то необходимо обновление сабтаски
-                        if (query != null && query.contains("id")) {
-                            String[] params = query.split("&");
-                            int id = getIdFromQuery(params);
-                            subtask.setId(id);
+                        // Если в POST запросе приходит сабтаска с id != 0, значит она пришла на обновление
+                        if (subtask.getId() != 0) {
                             manager.updateSubtask(subtask);
-                            response = gson.toJson(manager.getSubtaskById(id));
+                            response = gson.toJson(manager.getSubtaskById(subtask.getId()));
                             break;
                         }
                         subtask = new Subtask(subtask.getName(), subtask.getDescription(),
