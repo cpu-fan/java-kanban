@@ -15,7 +15,6 @@ public class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
     public void write(JsonWriter jsonWriter, LocalDateTime localDateTime) throws IOException {
         if (localDateTime != null) {
             jsonWriter.value(localDateTime.format(Task.getFormatter()));
-//        jsonWriter.value(localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         } else {
             jsonWriter.nullValue();
         }
@@ -28,7 +27,6 @@ public class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
             return null;
         } else {
             return LocalDateTime.parse(jsonReader.nextString(), Task.getFormatter());
-//        return LocalDateTime.parse(jsonReader.nextString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         }
     }
 }

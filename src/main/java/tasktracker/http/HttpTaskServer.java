@@ -162,15 +162,7 @@ public class HttpTaskServer {
                         Epic epic = gson.fromJson(body, Epic.class);
                         // Если в POST запросе приходит эпик с id != 0, значит она пришла на обновление
                         if (epic.getId() != 0) {
-                            // У эпиков можно самим обновлять только имя и описание, т.к. остальное рассчитывается
-                            String newEpicName = epic.getName();
-                            String oldEpicName = manager.getEpicById(epic.getId()).getName();
-                            String newEpicDesc = epic.getDescription();
-                            String oldEpicDesc = manager.getEpicById(epic.getId()).getDescription();
-                            if (!newEpicName.equals(oldEpicName) || !newEpicDesc.equals(oldEpicDesc)) {
-                                manager.getEpicById(epic.getId()).setName(newEpicName);
-                                manager.getEpicById(epic.getId()).setDescription(newEpicDesc);
-                            }
+                            manager.updateEpic(epic);
                             response = gson.toJson(manager.getEpicById(epic.getId()));
                             rCode = 200;
                             if (response.equals("null")) {

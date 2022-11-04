@@ -115,10 +115,15 @@ class FileBackedTaskManagerTest {
         manager.deleteAllTasks();
         manager.deleteAllEpics();
         manager.deleteAllSubtasks();
+        TaskManager manager2 = FileBackedTaskManager.loadFromFile(FILE_PATH);
 
-        assertThrows(ManagerSaveException.class, () -> FileBackedTaskManager.loadFromFile(FILE_PATH));
+        assertEquals(manager.toString(), manager2.toString());
     }
 
+    // Вот тут странно, почему-то не проходил тест loadFromFileWhenIsEmpty(), а ошибка во вкладке Run показывалась
+    // только на тест loadFromFileWhenHistoryListIsEmpty(). И еще почему-то у меня IDEA не выдает ошибку в том же Run
+    // на тест loadFromFile().
+    // Сейчас вроде подкорректировал, но если что-то все же упустил, поправь вновь пожалуйста :)
     @Test
     void loadFromFileWhenHistoryListIsEmpty() {
         String expected = "1,TASK,name,NEW,desc,null,0,\n" +

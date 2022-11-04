@@ -153,6 +153,15 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic == null) {
             throw new NonExistentTaskException("Эпика с таким идентификатором не существует");
         }
+        // У эпиков можно самим (по крайне мере по api) обновлять только имя и описание, т.к. остальное рассчитывается
+        if (!epic.getName().equals(mapOfEpics.get(epic.getId()).getName())
+                || !epic.getDescription().equals(mapOfEpics.get(epic.getId()).getDescription())) {
+            String newEpicName = epic.getName();
+            String newEpicDesc = epic.getDescription();
+            mapOfEpics.get(epic.getId()).setName(newEpicName);
+            mapOfEpics.get(epic.getId()).setDescription(newEpicDesc);
+            return;
+        }
         mapOfEpics.put(epic.getId(), epic);
     }
 
