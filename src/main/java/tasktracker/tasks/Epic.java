@@ -1,7 +1,9 @@
 package tasktracker.tasks;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 
 import static tasktracker.tasks.TaskStatuses.*;
 
@@ -143,5 +145,19 @@ public class Epic extends Task {
     @Override
     public String toString() {
         return super.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Epic epic = (Epic) o;
+        return Objects.equals(epicSubtasks, epic.epicSubtasks) && Objects.equals(endTime, epic.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), epicSubtasks, endTime) * 31;
     }
 }

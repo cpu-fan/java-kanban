@@ -1,5 +1,7 @@
 package tasktracker.tasks;
 
+import java.util.Objects;
+
 public class Subtask extends Task {
     private String epicName;
     private final int epicId;
@@ -75,5 +77,19 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         return super.toString() + getEpicId();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Subtask subtask = (Subtask) o;
+        return epicId == subtask.epicId && Objects.equals(epicName, subtask.epicName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), epicName, epicId) * 31;
     }
 }

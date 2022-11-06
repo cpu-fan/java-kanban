@@ -4,6 +4,7 @@ import tasktracker.exceptions.TaskTimeValidationException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class Task {
     protected int id;
@@ -142,5 +143,18 @@ public class Task {
                 getDescription(),
                 getStartTimeInFormat(),
                 getDuration());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && duration == task.duration && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status && Objects.equals(startTime, task.startTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, status, startTime, duration) * 31;
     }
 }

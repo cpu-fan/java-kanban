@@ -170,7 +170,7 @@ class HttpTaskServerTest {
 
     @Test
     void shouldUpdateEpic() {
-        String body = "{\"name\":\"updated epic\",\"description\":\"only name and desc can be updated\"}";
+        String body = "{\"id\":4,\"name\":\"updated epic\",\"description\":\"only name and desc can be updated\"}";
         HttpResponse<String> response = getResponseForPOSTEndpoints("/tasks/epic?id=4", body);
 
         String expected = "{\"epicSubtasks\":{},\"endTime\":null,\"id\":4,\"name\":\"updated epic\"," +
@@ -193,7 +193,7 @@ class HttpTaskServerTest {
 
     @Test
     void shouldUpdateSubtask() {
-        String body = "{\"name\":\"updated subtask\",\"description\":\"desc\",\"epicId\":2,\"status\":\"DONE\"," +
+        String body = "{\"id\":3,\"name\":\"updated subtask\",\"description\":\"desc\",\"epicId\":2,\"status\":\"DONE\"," +
                 "\"startTime\":\"12.12.2323 14:00\",\"duration\":60}";
         HttpResponse<String> response = getResponseForPOSTEndpoints("/tasks/subtask?id=3", body);
 

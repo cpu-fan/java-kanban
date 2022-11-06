@@ -147,21 +147,21 @@ class TaskManagerTest<T extends TaskManager> {
     void updateEpic() {
         epic = new Epic(epic.getId(), "epic updated", "desc");
         manager.updateEpic(epic);
-        assertEquals(epic, manager.getEpicById(epic.getId()));
+        assertEquals(epic.toString(), manager.getEpicById(epic.getId()).toString());
     }
 
     @Test
     void updateEpicWhenMapOfEpicsIsEmpty() {
         manager.deleteAllEpics();
-        manager.updateEpic(epic);
-        assertEquals(epic, manager.getEpicById(epic.getId()));
-    }
-
-    @Test
-    void updateEpicInvalidIdMapOfEpics() {
-        manager.deleteAllEpics();
         assertThrows(NonExistentTaskException.class, () -> manager.updateEpic(manager.getEpicById(epic.getId())));
     }
+
+    // Тест ниже можно удалить, т.к. тест выше стал аналогичным
+//    @Test
+//    void updateEpicInvalidIdMapOfEpics() {
+//        manager.deleteAllEpics();
+//        assertThrows(NonExistentTaskException.class, () -> manager.updateEpic(manager.getEpicById(epic.getId())));
+//    }
 
     @Test
     void updateSubtask() {
